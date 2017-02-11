@@ -1,4 +1,4 @@
-# Contribution
+# Contributing
 
 ## Как правильно коммитить
 
@@ -28,7 +28,7 @@ _WIP. Пока здесь делать нечего. Чуть позже я зд
 
 
 ```javascript
-if (game == 'made') {
+if (game == "made") {
 	song.sing();
 	return 1;
 }
@@ -38,7 +38,7 @@ if (error)
 
 while (coding) {
 	if (we_are_going_to ==
-		'break the line') {
+		"break the line") {
 		code.indent(1);
 		contunue;
 	}
@@ -49,8 +49,8 @@ while (coding) {
 
 ```javascript
 var x   = 116;
-var _x  = 300;
-var x_i = 8;
+	_x  = 300;
+	x_i = 8;
 ```
 
 ### Скобки и пробелы
@@ -86,7 +86,7 @@ default:
 ```javascript
 function getFun()
 {
-	return 'death';
+	return "death";
 }
 ```
 
@@ -107,3 +107,7 @@ function prettyLongName()
 	/* много кода */
 }
 ```
+
+### Строки
+
+Строковые константы в коде записываются в `"двойных кавычках"`, а символьные - в одинарных `'w'`.
