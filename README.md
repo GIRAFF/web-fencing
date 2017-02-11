@@ -6,4 +6,4 @@ _DISCLAIMER: this project is our web programming course work. We are not plannin
 
 Том первый. Пилим клон игры Nidhogg.
 
-[Диаграмма классов](https://drive.google.com/open?id=0B79sPQ4Aooj6aWc4UHEzbXYyUFU) (её черновой вариант).
+[Диаграмма юзкейсов](https://drive.google.com/open?id=0B79sPQ4Aooj6aWc4UHEzbXYyUFU) (её черновой вариант).
