@@ -8,6 +8,8 @@ class Player
         this.size.w = size.w;
         this.size.h = size.h;
         this.onGround = false;
+        this.sprite = null;
+
     }
 
     on_ground()
