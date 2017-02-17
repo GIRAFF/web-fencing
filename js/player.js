@@ -21,6 +21,7 @@ class Player
         {
             position.y-=g;
         }
+
     }
 
     move(x, y)
