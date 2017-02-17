@@ -7,10 +7,23 @@ class Player
         this.position.y = position.y;
         this.size.w = size.w;
         this.size.h = size.h;
+        this.onGround = false;
+        this.sprite = null;
+
     }
 
-    jump()
+    on_ground()
     {
+        console.log("ONGround");
+    }
+
+    jump(g)
+    {
+        if(!onGround)
+        {
+            position.y-=g;
+        }
+
     }
 
     move(x, y)
@@ -21,6 +34,7 @@ class Player
 
     attack()
     {
-
+        console.log("ATACK!!!!!");
+        
     }
 }
