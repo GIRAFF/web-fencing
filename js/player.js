@@ -11,7 +11,6 @@ class Player
 
     jump()
     {
-
     }
 
     move(x, y)
