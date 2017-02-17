@@ -31,10 +31,8 @@ function init()
 
 function preload()
 {
-	// preload resources
-	game.load.bitmapFont("font", "./fonts/font.png", "./fonts/font.fnt");
 	// loading font from google fonts
-	game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
+	game.load.script('webfont', 'https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js');
 }
 
 function create()
