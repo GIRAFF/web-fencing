@@ -32,5 +32,6 @@ class Player
     attack()
     {
         console.log("ATACK!!!!!");
+        
     }
 }
