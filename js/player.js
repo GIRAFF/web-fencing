@@ -9,6 +9,8 @@ class Player
         this.size.h = size.h;
     }
 
+	
+	
     jump()
     {
     }
