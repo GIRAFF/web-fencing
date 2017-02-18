@@ -1,26 +1,19 @@
-class Player
+/* player.js */
+
+//  Create player Phaser.game.sprite
+function create_Player(game, position, color, texture_name, gravity, bounce)
 {
-    constructor(position, size)
-    {
-        this.isAlive = 1; // 0 - death, 1 - alive
-        this.position.x = position.x;
-        this.position.y = position.y;
-        this.size.w = size.w;
-        this.size.h = size.h;
-    }
+    var p = game.add.sprite(position.x,
+                            position.y,
+                            texture_name
+                           );
 
-    jump()
-    {
-    }
+	game.physics.arcade.enable(p);
+	p.body.bounce.y = bounce;
+	p.body.gravity.y = gravity;
+	p.body.collideWorldBounds = true;
+	p.body.onGround = {onGround: false};
+	p.body.maxVelocity = { x: 99999, y: 99999}; 
 
-    move(x, y)
-    {
-        this.position.x += x;
-        this.position.y += y;
-    }
-
-    attack()
-    {
-
-    }
+    return p;
 }
