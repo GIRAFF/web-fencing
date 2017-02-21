@@ -42,6 +42,8 @@ function preload()
 	//load player texture
 	game.load.spritesheet("playerHeadSpriteSheet", "assets/headSpriteSheet.png", 26, 48, 4, 0, 0);//head
 	game.load.spritesheet("playerBodySpriteSheet", "assets/bodySpriteSheet.png", 27, 68, 4, 0, 0);//body
+	game.load.spritesheet("playerLegLeftSpriteSheet", "assets/leftLegSpriteSheet.png", 19, 43, 2, 0, 0);//legs right
+	game.load.spritesheet("playerLegRightSpriteSheet", "assets/rightLegSpriteSheet.png", 14, 45, 2, 0, 0);//legs right
 }
 
 function create()
@@ -88,9 +90,9 @@ function update()
 			} else if (cursors.down.isDown) {
 				//player[0].body.position.y += 6;//game.camera.y -= 4;
 			} if (cursors.left.isDown) {
-				player[0].body.sprite.position.x -= 4;
+				player[0].leg_left.sprite.position.x -= 4;
 			} else if (cursors.right.isDown) {
-				player[0].body.sprite.position.x += 4;
+				player[0].leg_left.sprite.position.x += 4;
 			}
 		break;
 		case 2: break;	
