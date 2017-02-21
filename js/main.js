@@ -40,9 +40,8 @@ function preload()
 	// loading font from google fonts too long loading !!!
 	game.load.script('webfont', 'https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js');
 	//load player texture
-	game.load.spritesheet("playerHeadSpriteSheet", "assets/headSpriteSheet.png", 26, 48, 4, 0, 0);
-
-	game.load.image("playerTexture", "assets/playerTexture.png", 50, 100);
+	game.load.spritesheet("playerHeadSpriteSheet", "assets/headSpriteSheet.png", 26, 48, 4, 0, 0);//head
+	game.load.spritesheet("playerBodySpriteSheet", "assets/bodySpriteSheet.png", 27, 68, 4, 0, 0);//body
 }
 
 function create()
@@ -59,7 +58,7 @@ function create()
 	text = game.add.text(game.world.centerX, game.world.centerY, "this game", styles[1]);
 		
 	// Player init
-	player.push( createPlayer(game, {x:0, y:10}, "#fac", ["playerHeadSpriteSheet",
+	player.push( createPlayer(game, {x:100, y:10}, "#fac", ["playerHeadSpriteSheet",
 														  "playerBodySpriteSheet",
 														  "playerHandLeftSpriteSheet",
 														  "playerHandRightSpriteSheet",
@@ -68,13 +67,16 @@ function create()
 	player[0].head.animation.enableUpdate = true;
 	player[0].head.animation.play("stay", 30, true);
 
-	//player[0].body.animation.enableUpdate = true;
-	//player[0].body.animation.play("stay", 4, true);
+	player[0].body.animation.enableUpdate = true;
+	player[0].body.animation.play("stay", 4, true);
 
 }
 
 function update()
 {
+	//for update  position head, legs and arms
+	positionBodyParts(player[0]);
+
 	// TODO add some update logic
 	switch (game_state[3]) {
 		case 0:  break;
@@ -86,9 +88,9 @@ function update()
 			} else if (cursors.down.isDown) {
 				//player[0].body.position.y += 6;//game.camera.y -= 4;
 			} if (cursors.left.isDown) {
-				//player[0].body.position.x -= 6;//game.camera.x += 4;
+				player[0].body.sprite.position.x -= 4;
 			} else if (cursors.right.isDown) {
-				//player[0].body.position.x += 6;//game.camera.x -= 4;
+				player[0].body.sprite.position.x += 4;
 			}
 		break;
 		case 2: break;	
