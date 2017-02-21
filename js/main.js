@@ -41,7 +41,7 @@ function preload()
 	game.load.script('webfont', 'https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js');
 	//load player texture
 	game.load.spritesheet("playerHeadSpriteSheet", "assets/headSpriteSheet.png", 26, 48, 4, 0, 0);//head
-	game.load.spritesheet("playerBodySpriteSheet", "assets/bodySpriteSheet.png", 27, 68, 4, 0, 0);//body
+	game.load.spritesheet("playerBodySpriteSheet", "assets/bodySpriteSheet0.png", 27, 116, 4, 0, 0);//body
 	game.load.spritesheet("playerLegLeftSpriteSheet", "assets/leftLegSpriteSheet.png", 19, 43, 2, 0, 0);//legs right
 	game.load.spritesheet("playerLegRightSpriteSheet", "assets/rightLegSpriteSheet.png", 14, 45, 2, 0, 0);//legs right
 }
@@ -66,43 +66,48 @@ function create()
 														  "playerHandRightSpriteSheet",
 														  "playerLegLeftSpriteSheet",
 														  "playerLegRightSpriteSheet"], 300, 0.1));
-	player[0].head.animation.enableUpdate = true;
-	player[0].head.animation.play("stay", 30, true);
-
-	player[0].body.animation.enableUpdate = true;
-	player[0].body.animation.play("stay", 4, true);
-
 }
 
 function update()
 {
-	//for update  position head, legs and arms
-	positionBodyParts(player[0]);
+	//Save dirrection player for scale
+	var temp_dir = player[0].dirrection;
 
-	// TODO add some update logic
+	//player[0].debugInfoToConsole();
+
 	switch (game_state[3]) {
 		case 0:  break;
 		case 1:
+		//animation stay
+		if(cursors.up.isDown ||
+			 cursors.down.isDown ||
+			 cursors.left.isDown ||
+			 cursors.right.isDown) {
+				 player[0].setAnimation("stay");
+			 }
+
 			if (cursors.up.isDown) {
-				//if(player[0].body.onGround)
-				//player[0].body.position.y -= 6;//game.camera.y += 4;
-				//player[0].animations.play("hand_top", 4, true);
 			} else if (cursors.down.isDown) {
-				//player[0].body.position.y += 6;//game.camera.y -= 4;
+				player[0].body.sprite.position.y += 6;
 			} if (cursors.left.isDown) {
-				player[0].leg_left.sprite.position.x -= 4;
+				player[0].body.sprite.position.x -= 4;
+				player[0].dirrection = 1;
 			} else if (cursors.right.isDown) {
-				player[0].leg_left.sprite.position.x += 4;
+				player[0].body.sprite.position.x += 4;
+				player[0].dirrection = -1;
 			}
 		break;
 		case 2: break;	
 	}
+
+		if( player[0].dirrection != temp_dir ) player[0].doReflection();
+		player[0].updateBodyPartsPosition(); //for update  position head, legs and arms
 }
 
 function render()
 {
 	// TODO check what should we do here
 	//game.debug.geom(player[0].rect, player[0].color);
-	//player[0].body.onGround.onGround = game.physics.arcade.collide(player[0], platforms);
+	//player[0].body.sprite.body = game.physics.arcade.collide(player[0], platforms);
 	//console.log(player[0].body.onGround.onGround);
 }
