@@ -58,7 +58,7 @@ function create()
 	game.world.setBounds( 0, 0, 800, 600);
 
 	text = game.add.text(game.world.centerX, game.world.centerY, "this game", styles[1]);
-		
+	
 	// Player init
 	player.push( createPlayer(game, {x:100, y:10}, "#fac", ["playerHeadSpriteSheet",
 														  "playerBodySpriteSheet",
@@ -73,16 +73,14 @@ function update()
 	//Save dirrection player for scale
 	var temp_dir = player[0].dirrection;
 
-	//player[0].debugInfoToConsole();
-
 	switch (game_state[3]) {
 		case 0:  break;
 		case 1:
 		//animation stay
 		if(cursors.up.isDown ||
-			 cursors.down.isDown ||
-			 cursors.left.isDown ||
-			 cursors.right.isDown) {
+		   cursors.down.isDown ||
+		   cursors.left.isDown ||
+		   cursors.right.isDown) {
 				 player[0].setAnimation("stay");
 			 }
 
