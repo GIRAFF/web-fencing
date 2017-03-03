@@ -2,7 +2,13 @@
 
 // for our Phaser.Game
 var game,
-	game_state = ["Menu", "Game", "Config", 1],
+	game_state = {
+		MENU: 0,
+		CONFIG: 1,
+		PAUSE: 2,
+		GAME: 3
+	},
+	curr_state = game_state.GAME,
 	text,
 	createText, 
 	styles = //styles for different text
@@ -18,11 +24,18 @@ var game,
 
 // script for loading fonts from google fonts.
 WebFontConfig = {
-	active: function() { console.log("active"); game.time.events.add(Phaser.Timer.SECOND, function(){ console.log("loading correct")}, this); },
+	active: function()
+	{
+		console.log("active");
+		game.time.events.add(Phaser.Timer.SECOND, function()
+			{
+				console.log("loading correct");
+			}, this);
+	},
 	google: {
 		families: ["UnifrakturMaguntia"]
 	},
-	loading: function(){ console.log("loading");}
+	loading: function(){ console.log("loading"); }
 };
 
 function init()
@@ -73,33 +86,35 @@ function update()
 	//Save dirrection player for scale
 	var temp_dir = player[0].dirrection;
 
-	switch (game_state[3]) {
-		case 0:  break;
-		case 1:
+	switch (curr_state) {
+	case game_state.GAME:
 		//animation stay
-		if(cursors.up.isDown ||
-		   cursors.down.isDown ||
-		   cursors.left.isDown ||
-		   cursors.right.isDown) {
-				 player[0].setAnimation("stay");
-			 }
+		if (cursors.up.isDown ||
+			cursors.down.isDown ||
+			cursors.left.isDown ||
+			cursors.right.isDown) {
+			player[0].setAnimation("stay");
+		}
 
-			if (cursors.up.isDown) {
-			} else if (cursors.down.isDown) {
-				player[0].body.sprite.position.y += 6;
-			} if (cursors.left.isDown) {
-				player[0].body.sprite.position.x -= 4;
-				player[0].dirrection = 1;
-			} else if (cursors.right.isDown) {
-				player[0].body.sprite.position.x += 4;
-				player[0].dirrection = -1;
-			}
+		if (cursors.up.isDown) {
+			// TODO
+		} else if (cursors.down.isDown) {
+			player[0].body.sprite.position.y += 6;
+		}
+		if (cursors.left.isDown) {
+			player[0].body.sprite.position.x -= 4;
+			player[0].dirrection = 1;
+		} else if (cursors.right.isDown) {
+			player[0].body.sprite.position.x += 4;
+			player[0].dirrection = -1;
+		}
 		break;
-		case 2: break;	
+	default: break;	
 	}
 
-		if( player[0].dirrection != temp_dir ) player[0].doReflection();
-		player[0].updateBodyPartsPosition(); //for update  position head, legs and arms
+	if (player[0].dirrection != temp_dir) player[0].doReflection();
+	//for update position head,legs and arms
+	player[0].updateBodyPartsPosition();
 }
 
 function render()
