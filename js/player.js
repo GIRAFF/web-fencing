@@ -48,14 +48,17 @@ function createPlayer(game, position, color, texture_names, gravity, bounce)
 			[0,1,1],
 			frame_rate/2,
 			true);
-
+			
 	//Class Player, add properties here
 	main_player = {
 		//Properties here
 		dirrection: 1, // 1 - left, -1 - right 
 		jump_power: 2300,
+		right_left_power:5000,
 		jump_time: 0,
 		on_ground: false,
+		horizontal_velocity: 400,
+		current_animation: "stay",
 		//Sprites of player here
 		head: {
 			animation: p_head_sprite_anim,
@@ -92,19 +95,32 @@ function createPlayer(game, position, color, texture_names, gravity, bounce)
 			if(this.on_ground && game.time.now > this.jump_time) {
 				this.body.sprite.body.velocity.y = this.jump_power;
 				this.jump_time = game.time.now + 1000;
+				this.setAnimation("jump");
+				this.updateBodyPartsPosition();
 			}
 		},
 
 		left: function ()
 		{
 			this.dirrection = 1;
-			this.body.sprite.position.x -= 6;
+			this.body.sprite.body.velocity.x = - this.horizontal_velocity;
+			this.setAnimation("run_left");
+			this.updateBodyPartsPosition();
 		},
 		
 		right: function ()
 		{
 			this.dirrection = -1;
-			this.body.sprite.position.x += 6;
+			this.body.sprite.body.velocity.x = this.horizontal_velocity;
+			this.setAnimation("run_right");
+			this.updateBodyPartsPosition();	
+		},
+
+		stay: function ()
+		{
+			this.body.sprite.body.velocity.x = 0;
+			this.setAnimation("stay");
+			this.updateBodyPartsPosition();
 		},
 
 		//Move secondary sprites to main sprite ( main sprites it is legs С: )
@@ -153,12 +169,14 @@ function createPlayer(game, position, color, texture_names, gravity, bounce)
 		//All animation of player here !
 		setAnimation: function( animation_name )
 		{
-			this.head.animation.enableUpdate = true;
-			this.head.animation.play( animation_name, 30, true);
-			this.body.animation.enableUpdate = true;
-			this.body.animation.play(animation_name, 4, true);
-			this.leg_left.animation.play(animation_name, 4, true);
-			this.leg_right.animation.play(animation_name, 4, true);
+			if(this.current_animation != animation_name)
+			{
+				this.current_animation = animation_name;
+				this.head.animation.play( animation_name, 30, true);
+				this.body.animation.play(animation_name, 4, true);
+				this.leg_left.animation.play(animation_name, 4, true);
+				this.leg_right.animation.play(animation_name, 4, true);
+			}
 		}
 	};
 

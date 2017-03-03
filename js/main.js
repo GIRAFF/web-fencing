@@ -24,7 +24,8 @@ var game,
 	}, 
 	player = [], //players  Phaser.game.sprite
 	platforms, //platforms  Phaser.game.sprite
-	gravity = 300; //global player gravity
+	gravity = 300, //global player gravity
+	wasd = {};
 
 // script for loading fonts from google fonts.
 WebFontConfig = {
@@ -76,6 +77,14 @@ function create()
 
 	// keyboard control
     input.cursors = game.input.keyboard.createCursorKeys();
+	
+	input.wasd = {
+	up: game.input.keyboard.addKey(Phaser.Keyboard.W),
+	down: game.input.keyboard.addKey(Phaser.Keyboard.S),
+	left: game.input.keyboard.addKey(Phaser.Keyboard.A),
+	right: game.input.keyboard.addKey(Phaser.Keyboard.D),
+	};
+
 	input.esc = game.input.keyboard.addKey(Phaser.Keyboard.ESC);
 	input.esc.onDown.add(function()
 		{
@@ -132,17 +141,6 @@ function update()
 	switch (curr_state) {
 	case game_state.GAME:
 		//animation stay
-		if (input.cursors.up.isDown ||
-			input.cursors.down.isDown ||
-			input.cursors.left.isDown ||
-			input.cursors.right.isDown) {
-			// TODO set to run
-			for(var i = 0; i < player.lengthl; i++)
-				player[i].setAnimation("stay");
-			
-			//player[0].setAnimation("stay");
-		}
-
 		if (input.cursors.up.isDown) {
 			player[0].jump();
 		} else if (input.cursors.down.isDown) {	}
@@ -152,7 +150,30 @@ function update()
 		} else if (input.cursors.right.isDown) {
 			player[0].right();
 		}
+			
+		if (input.wasd.up.isDown) {
+			player[1].jump();
+		} else if (input.wasd.down.isDown) {	}
 
+		if (input.wasd.left.isDown) {
+			player[1].left();
+		} else if (input.wasd.right.isDown) {
+			player[1].right();
+		}
+		
+		if (!(input.cursors.right.isDown &&
+				input.cursors.left.isDown &&
+				input.cursors.up.isDown &&
+				input.cursors.downs.isDown )) 
+				player[0].stay();
+				
+
+		if (!(input.wasd.right.isDown &&
+				input.wasd.left.isDown &&
+				input.wasd.up.isDown &&
+				input.wasd.downs.isDown ))
+				player[1].stay();	
+			
 		break;
 	case game_state.PAUSE:
 		// TODO fade
@@ -170,14 +191,11 @@ function update()
 			player[i].body.sprite, platforms);
 		//for update position head,legs and arms
 		if (player[i].dirrection != temp_dir[i]) player[i].doReflection();
-			player[i].updateBodyPartsPosition();
+
 	}
 }
 
 function render()
 {
-	// TODO check what should we do here
-	/*console.log("COLL - " + player[0].on_ground +
-			    "; TOUCHING - " + player[0].body.sprite.body.touching.down);*/
-	//console.log("TOUCHING"+player[0].body.sprite.body.touching.down);
+
 }
