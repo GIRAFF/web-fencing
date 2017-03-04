@@ -56,9 +56,12 @@ function createPlayer(game, position, color, texture_names, gravity, bounce)
 		jump_power: 2300,
 		right_left_power:5000,
 		jump_time: 0,
+		move_time: 0,
 		on_ground: false,
 		horizontal_velocity: 400,
 		current_animation: "stay",
+		weapon_is_near: false,
+		weapon: null, //  weapon by player
 		//Sprites of player here
 		head: {
 			animation: p_head_sprite_anim,
@@ -116,11 +119,42 @@ function createPlayer(game, position, color, texture_names, gravity, bounce)
 			this.updateBodyPartsPosition();	
 		},
 
+		takeWeapon: function (w)
+		{
+			if(this.weapon == null )
+			{
+				if( this.weapon_is_near && w != null) {
+					this.weapon = w;
+					this.weapon.body.enable = true;
+					w.body.gravity.y = 0;
+				}
+			}
+			else
+			this.throwWeapon(800);
+		},
+
+		throwWeapon: function (gravity)
+		{
+			if(this.weapon != null) {
+				if(gravity != null)
+					this.weapon.body.gravity.y = gravity;
+				else
+					this.weapon.body.gravity.y = 800;
+				this.weapon = null;
+				this.weapon_is_near = false;
+			}
+		},
+
 		stay: function ()
 		{
-			this.body.sprite.body.velocity.x = 0;
 			this.setAnimation("stay");
+			this.body.sprite.body.velocity.x = 0;
 			this.updateBodyPartsPosition();
+		},
+
+		save: function ()
+		{
+			// Save all player properties here
 		},
 
 		//Move secondary sprites to main sprite ( main sprites it is legs С: )
@@ -130,13 +164,21 @@ function createPlayer(game, position, color, texture_names, gravity, bounce)
 				this.body.sprite.position.x - this.head.sprite.width / 3 >> 0;
 			this.head.sprite.position.y = this.body.sprite.position.y;
 
+			if(this.weapon != null) {
+				this.weapon.position.y =
+				this.head.sprite.height + this.head.sprite.position.y;
+				this.weapon.position.x = 
+				this.head.sprite.position.x - this.head.sprite.width;
+				this.weapon.scale.setTo(this.dirrection, 1);
+			}
+
 			if (this.dirrection == 1) {    //If left dirrect
 				this.leg_left.sprite.position.x =
 					this.body.sprite.position.x -
 					this.leg_left.sprite.width + 10;
 				this.leg_left.sprite.position.y = this.body.sprite.position.y +
 					this.body.sprite.height - this.leg_left.sprite.height;
-
+				
 				this.leg_right.sprite.position.y =
 					this.leg_left.sprite.position.y;
 				this.leg_right.sprite.position.x =

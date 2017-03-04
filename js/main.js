@@ -25,7 +25,8 @@ var game,
 	player = [], //players  Phaser.game.sprite
 	platforms, //platforms  Phaser.game.sprite
 	gravity = 300, //global player gravity
-	wasd = {};
+	wasd = {},
+	weapons; // all weapons
 
 // script for loading fonts from google fonts.
 WebFontConfig = {
@@ -58,7 +59,10 @@ function preload()
 	// loading font from google fonts too long loading !!!
 	game.load.script('webfont',
 		'https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js');
-	//load player texture
+	// load weapon texture
+	game.load.spritesheet("weaponTexture",
+		"assets/headSpriteSheet.png", 100, 10, 1, 0, 0); // sword
+	// load player texture
 	game.load.spritesheet("playerHeadSpriteSheet",
 		"assets/headSpriteSheet.png", 26, 48, 4, 0, 0);//head
 	game.load.spritesheet("playerBodySpriteSheet",
@@ -83,6 +87,8 @@ function create()
 	down: game.input.keyboard.addKey(Phaser.Keyboard.S),
 	left: game.input.keyboard.addKey(Phaser.Keyboard.A),
 	right: game.input.keyboard.addKey(Phaser.Keyboard.D),
+	throw_or_take_player0: game.input.keyboard.addKey(Phaser.Keyboard.L),
+	throw_or_take_player1: game.input.keyboard.addKey(Phaser.Keyboard.E),
 	};
 
 	input.esc = game.input.keyboard.addKey(Phaser.Keyboard.ESC);
@@ -97,12 +103,27 @@ function create()
 			break;
 			}
 		});
+
+	// earth
 	platforms = game.add.group();
-	//  We will enable physics for any object that is created in this group
 	platforms.enableBody = true;
 	var ground = platforms.create(0, game.world.height - 40, "a");
 	ground.scale.setTo(40, 1);
     ground.body.immovable = true;
+
+	// add_weapon
+	weapons = game.add.group();
+	weapons.enableBody = true;
+	var w1 = weapons.create(
+		game.world.width/2, game.world.height/2, "weaponTexture");
+	w1.body.gravity.y = gravity;
+	w1.body.collideWorldBounds = true;
+	
+	var w2 = weapons.create(
+		game.world.width/2, game.world.height/2, "weaponTexture");
+	w2.body.gravity.y = gravity;
+	w2.body.collideWorldBounds = true;
+
 	// for game world size more than screen size
 	//game.world.setBounds( -1000, -1000, 1000, 1000);
 	game.world.setBounds( 0, 0, 800, 600);
@@ -120,6 +141,7 @@ function create()
 			"playerHandRightSpriteSheet",
 			"playerLegLeftSpriteSheet",
 			"playerLegRightSpriteSheet"], 300, 0.1));
+			
 	// Player 2 init	
 	player.push(createPlayer(game, {x:100, y:10}, "#fac",
 		["playerHeadSpriteSheet",
@@ -128,6 +150,8 @@ function create()
 			"playerHandRightSpriteSheet",
 			"playerLegLeftSpriteSheet",
 			"playerLegRightSpriteSheet"], 300, 0.1));
+	player[0].weapon_is_near = true;
+	player[0].takeWeapon(w2);
 }
 
 function update()
@@ -140,15 +164,26 @@ function update()
 
 	switch (curr_state) {
 	case game_state.GAME:
-		//animation stay
+		if (!(input.cursors.right.isDown &&
+			input.cursors.left.isDown &&
+			input.cursors.up.isDown &&
+			input.cursors.downs.isDown )) 
+			player[0].stay();
+				
+		if (!(input.wasd.right.isDown &&
+				input.wasd.left.isDown &&
+				input.wasd.up.isDown &&
+				input.wasd.down.isDown ))
+				player[1].stay();	
+
 		if (input.cursors.up.isDown) {
-			player[0].jump();
+			player[0].jump(); console.log("up");
 		} else if (input.cursors.down.isDown) {	}
 
 		if (input.cursors.left.isDown) {
-			player[0].left();
+			player[0].left(); console.log("left");
 		} else if (input.cursors.right.isDown) {
-			player[0].right();
+			player[0].right(); console.log("right");
 		}
 			
 		if (input.wasd.up.isDown) {
@@ -160,20 +195,15 @@ function update()
 		} else if (input.wasd.right.isDown) {
 			player[1].right();
 		}
-		
-		if (!(input.cursors.right.isDown &&
-				input.cursors.left.isDown &&
-				input.cursors.up.isDown &&
-				input.cursors.downs.isDown )) 
-				player[0].stay();
-				
 
-		if (!(input.wasd.right.isDown &&
-				input.wasd.left.isDown &&
-				input.wasd.up.isDown &&
-				input.wasd.downs.isDown ))
-				player[1].stay();	
-			
+		if(input.wasd.throw_or_take_player1.isDown) {
+			player[1].takeWeapon(/*Ближнее к игроку оружие*/);
+		}
+
+		if(input.wasd.throw_or_take_player0.isDown) {
+			player[0].takeWeapon(/*Ближнее к игроку оружие*/);
+		}
+					
 		break;
 	case game_state.PAUSE:
 		// TODO fade
@@ -185,13 +215,23 @@ function update()
 	default: break;	
 	}
 
+		//for check collision of players
+		//game.physics.arcade.collide(
+			//player[0].body.sprite,player[1].body.sprite);
+
+			//Earth weapons
+		game.physics.arcade.collide(
+					weapons, platforms);
 	for(var i = 0; i < player.length; i++)
 	{
 		player[i].on_ground =  game.physics.arcade.collide(
 			player[i].body.sprite, platforms);
+
+		player[i].weapon_is_near = game.physics.arcade.collide(
+			player[i].body.sprite, weapons);
+
 		//for update position head,legs and arms
 		if (player[i].dirrection != temp_dir[i]) player[i].doReflection();
-
 	}
 }
 
