@@ -10,7 +10,8 @@ var game,
 	},
 	curr_state = game_state.GAME,
 	text,
-	createText, 
+	createText,
+	sound, 
 	styles = //styles for different text
 	[
 		{ font: "20px UnifrakturMaguntia", fill: "#fac" },
@@ -71,6 +72,8 @@ function preload()
 		"assets/leftLegSpriteSheet.png", 19, 43, 2, 0, 0);//legs right
 	game.load.spritesheet("playerLegRightSpriteSheet",
 		"assets/rightLegSpriteSheet.png", 14, 45, 2, 0, 0);//legs right
+	game.load.audio("sound",
+		"assets/MainThemev2.wav");
 }
 
 function create()
@@ -78,7 +81,6 @@ function create()
 
 	game.physics.startSystem(Phaser.Physics.ARCADE);
 	game.stage.backgroundColor = "#000";
-
 	// keyboard control
     input.cursors = game.input.keyboard.createCursorKeys();
 	
@@ -152,6 +154,9 @@ function create()
 			"playerLegRightSpriteSheet"], 300, 0.1));
 	player[0].weapon_is_near = true;
 	player[0].takeWeapon(w2);
+	// Music
+	sound = game.add.audio("sound");
+	sound.play("all");
 }
 
 function update()
