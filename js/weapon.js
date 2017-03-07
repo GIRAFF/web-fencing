@@ -15,8 +15,13 @@ function createWeapon( game_group, texture_name, gravity)
             this.rectangle.width =  Math.abs(this.width);
             this.rectangle.height = Math.abs(this.height);
 
-            if(this.on_ground)
+            if(this.on_ground && !this.is_used) {
                 this.body.enable = false;
+            }
+
+            if(this.is_used) {
+                 this.body.enable = true;
+            }
         };
         new_weapon.body.gravity.y = gravity;
         new_weapon.body.collideWorldBounds = true;

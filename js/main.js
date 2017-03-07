@@ -178,11 +178,45 @@ function update()
 
 	switch (curr_state) {
 	case game_state.GAME:
+	// Check different collisions
 		for(var i = 0; i < weapons.length; i++)
 		{
 			weapons.children[i].updateRect();
 		}
+			//for check collision of players
+			//game.physics.arcade.collide(
+				//player[0].body.sprite,player[1].body.sprite);
+
+			//Each weapons on earth
+		for(var i = 0; i < weapons.children.length; i++){
+			weapons.children[i].on_ground = game.physics.arcade.collide(
+					weapons.children[i], platforms);
+		}
+
+		// for event die
+		let c = game.physics.arcade.collide(
+			player[0].body.sprite, player[1].weapon);
+
+		if (c)
+			player[0].die();
+
+		c = game.physics.arcade.collide(
+			player[1].body.sprite, player[0].weapon);
+
+		if (c)
+			player[1].die();
+
+
+		for(var i = 0; i < player.length; i++)
+		{	// Player with platforms collide
+			player[i].on_ground =  game.physics.arcade.collide(
+				player[i].body.sprite, platforms);
+			
+			//for update position head,legs and arms
+			if (player[i].dirrection != temp_dir[i]) player[i].doReflection();
+		}
 		
+	// Commands input
 		if (!(input.cursors.right.isDown &&
 			input.cursors.left.isDown &&
 			input.cursors.up.isDown &&
@@ -224,10 +258,14 @@ function update()
 			if(player[1].weapon == null)
 				for(var i = 0; i < weapons.children.length; i++)
 				{	
+					let c = weapons.children[i].body.enable;
+						weapons.children[i].body.enable = true;
 					if(game.physics.arcade.intersects(
 						player[1].body.sprite.body,
 						weapons.children[i].body))
 						player[1].takeWeapon(weapons.children[i]);
+					else
+						weapons.children[i].body.enable = c;
 				}	
 		}
 
@@ -235,10 +273,14 @@ function update()
 			if(player[0].weapon == null)
 				for(var i = 0; i < weapons.children.length; i++)
 				{	
+					let c = weapons.children[i].body.enable;
+						weapons.children[i].body.enable = true;
 					if(game.physics.arcade.intersects(
 						player[0].body.sprite.body,
 						weapons.children[i].body))
 						player[0].takeWeapon(weapons.children[i]);
+					else
+						weapons.children[i].body.enable = c;
 				}	
 		}
 					
@@ -251,27 +293,6 @@ function update()
 			styles[0]);
 	break;
 	default: break;	
-	}
-
-		//for check collision of players
-		//game.physics.arcade.collide(
-			//player[0].body.sprite,player[1].body.sprite);
-
-		//Each weapons on earth
-	for(var i = 0; i < weapons.children.length; i++)
-		weapons.children[i].on_ground = game.physics.arcade.collide(
-				weapons.children[i], platforms);
-
-	for(var i = 0; i < player.length; i++)
-	{
-		player[i].on_ground =  game.physics.arcade.collide(
-			player[i].body.sprite, platforms);
-
-		player[i].weapon_is_near = game.physics.arcade.collide(
-			player[i].body.sprite, weapons);
-
-		//for update position head,legs and arms
-		if (player[i].dirrection != temp_dir[i]) player[i].doReflection();
 	}
 }
 
