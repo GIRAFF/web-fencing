@@ -165,8 +165,8 @@ function createPlayer(game, position, color, texture_names, gravity, bounce)
 		{	
 			this.rectangle.x = this.body.sprite.position.x;
 			this.rectangle.y = this.body.sprite.position.y;
-			this.rectangle.width = this.body.sprite.width;
-			this.rectangle.height = this.body.sprite.height;
+			this.rectangle.width = Math.abs(this.body.sprite.width);
+			this.rectangle.height =  Math.abs(this.body.sprite.height);
 
 			//Head relative position
 			this.head.sprite.position.x =

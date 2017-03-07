@@ -12,8 +12,8 @@ function createWeapon( game_group, texture_name, gravity)
         {
             this.rectangle.x = this.position.x;
             this.rectangle.y = this.position.y;
-            this.rectangle.width = this.width;
-            this.rectangle.height = this.height;
+            this.rectangle.width =  Math.abs(this.width);
+            this.rectangle.height = Math.abs(this.height);
 
             if(this.on_ground)
                 this.body.enable = false;
@@ -27,7 +27,7 @@ function createWeapon( game_group, texture_name, gravity)
                 dir = 1;
             else
                 dir = -1;
-                
+
             this.scale.setTo(dir, 1);
         }
     

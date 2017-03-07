@@ -72,8 +72,8 @@ function preload()
 		"assets/leftLegSpriteSheet.png", 19, 43, 2, 0, 0);//legs right
 	game.load.spritesheet("playerLegRightSpriteSheet",
 		"assets/rightLegSpriteSheet.png", 14, 45, 2, 0, 0);//legs right
-	game.load.audio("sound",
-		"assets/MainThemev2.wav");
+	/*game.load.audio("sound",
+		"assets/MainThemev2.wav");*/
 	//game.load.image("test1", "assets/test1_v2.0.png");
 }
 
@@ -163,11 +163,10 @@ function create()
 			"playerHandRightSpriteSheet",
 			"playerLegLeftSpriteSheet",
 			"playerLegRightSpriteSheet"], 300, 0.1));
-	player[0].weapon_is_near = true;
 	player[0].takeWeapon(weapons.children[0]);
-	// Music
-	sound = game.add.audio("sound");
-	sound.play("all");
+	// Music Need host
+//	sound = game.add.audio("sound");
+//	sound.play("all");
 }
 
 function update()
@@ -217,26 +216,30 @@ function update()
 		}
 		if (input.wasd.throw_player0.isDown)
 			player[0].throwWeapon();
+
 		if (input.wasd.throw_player1.isDown)
 			player[1].throwWeapon();	
 		
 		if (input.wasd.take_player1.isDown) {
-			for(var i = 0; i < weapons.children.length; i++)
-			{			//rashodimsya kak ryad Fur'e
-				let a = Phaser.Rectangle.intersection(player[1].rectangle,
-				 weapons.children[i].rectangle);
-				if(a.width * a.height != 0)
-					player[1].takeWeapon(weapons.children[i]);
-			}	
+			if(player[1].weapon == null)
+				for(var i = 0; i < weapons.children.length; i++)
+				{	
+					if(game.physics.arcade.intersects(
+						player[1].body.sprite.body,
+						weapons.children[i].body))
+						player[1].takeWeapon(weapons.children[i]);
+				}	
 		}
+
 		if(input.wasd.take_player0.isDown) {
-			for(var i = 0; i < weapons.children.length; i++)
-			{			//rashodimsya kak ryad Fur'e
-				let a = Phaser.Rectangle.intersection(player[0].rectangle,
-				 weapons.children[i].rectangle);
-				if(a.width * a.height != 0)
-					player[0].takeWeapon(weapons.children[i]);
-			}
+			if(player[0].weapon == null)
+				for(var i = 0; i < weapons.children.length; i++)
+				{	
+					if(game.physics.arcade.intersects(
+						player[0].body.sprite.body,
+						weapons.children[i].body))
+						player[0].takeWeapon(weapons.children[i]);
+				}	
 		}
 					
 		break;
@@ -274,13 +277,5 @@ function update()
 
 function render()
 {
-/*for(var i = 0; i < weapons.children.length; i++)
-				if(Phaser.Rectangle.intersection(player[0].rectangle,
-				 weapons.children[i].rectangle))
-			player[0].takeWeapon(weapons.children[i]);
 
-for(var i = 0; i < weapons.children.length; i++)
-				if(Phaser.Rectangle.intersection(player[1].rectangle,
-				 weapons.children[i].rectangle))
-			player[1].takeWeapon(weapons.children[i]);*/
 }
