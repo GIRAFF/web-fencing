@@ -60,8 +60,10 @@ function createPlayer(game, position, color, texture_names, gravity, bounce)
 		on_ground: false,
 		horizontal_velocity: 400,
 		current_animation: "stay",
-		weapon_is_near: false,
 		weapon: null, //  weapon by player
+		rectangle: new Phaser.Rectangle(p_body_sprite.position.x, 
+			p_body_sprite.position.y, p_body_sprite.width, p_body_sprite.height),
+			
 		//Sprites of player here
 		head: {
 			animation: p_head_sprite_anim,
@@ -118,30 +120,31 @@ function createPlayer(game, position, color, texture_names, gravity, bounce)
 			this.setAnimation("run_right");
 			this.updateBodyPartsPosition();	
 		},
-
+		// Поднять оружие
 		takeWeapon: function (w)
 		{
 			if(this.weapon == null )
 			{
-				if( this.weapon_is_near && w != null) {
+				if(w != null && !w.is_used) {
 					this.weapon = w;
+					this.weapon.is_used = true;
 					this.weapon.body.enable = true;
-					w.body.gravity.y = 0;
+					this.weapon.body.gravity.y = 0;
 				}
 			}
-			else
-			this.throwWeapon(800);
 		},
-
+		// Уронить оружие
 		throwWeapon: function (gravity)
 		{
 			if(this.weapon != null) {
+				this.weapon.body.enable = true;
 				if(gravity != null)
 					this.weapon.body.gravity.y = gravity;
 				else
 					this.weapon.body.gravity.y = 800;
+				
+				this.weapon.is_used = false;
 				this.weapon = null;
-				this.weapon_is_near = false;
 			}
 		},
 
@@ -159,7 +162,13 @@ function createPlayer(game, position, color, texture_names, gravity, bounce)
 
 		//Move secondary sprites to main sprite ( main sprites it is legs С: )
 		updateBodyPartsPosition: function()
-		{	//Head relative position
+		{	
+			this.rectangle.x = this.body.sprite.position.x;
+			this.rectangle.y = this.body.sprite.position.y;
+			this.rectangle.width = this.body.sprite.width;
+			this.rectangle.height = this.body.sprite.height;
+
+			//Head relative position
 			this.head.sprite.position.x =
 				this.body.sprite.position.x - this.head.sprite.width / 3 >> 0;
 			this.head.sprite.position.y = this.body.sprite.position.y;

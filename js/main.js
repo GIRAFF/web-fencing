@@ -74,6 +74,7 @@ function preload()
 		"assets/rightLegSpriteSheet.png", 14, 45, 2, 0, 0);//legs right
 	game.load.audio("sound",
 		"assets/MainThemev2.wav");
+	//game.load.image("test1", "assets/test1_v2.0.png");
 }
 
 function create()
@@ -81,16 +82,20 @@ function create()
 
 	game.physics.startSystem(Phaser.Physics.ARCADE);
 	game.stage.backgroundColor = "#000";
+	// Test player color
+	//var o = game.add.sprite(0, 0, "test1");
+
 	// keyboard control
     input.cursors = game.input.keyboard.createCursorKeys();
-	
 	input.wasd = {
 	up: game.input.keyboard.addKey(Phaser.Keyboard.W),
 	down: game.input.keyboard.addKey(Phaser.Keyboard.S),
 	left: game.input.keyboard.addKey(Phaser.Keyboard.A),
 	right: game.input.keyboard.addKey(Phaser.Keyboard.D),
-	throw_or_take_player0: game.input.keyboard.addKey(Phaser.Keyboard.L),
-	throw_or_take_player1: game.input.keyboard.addKey(Phaser.Keyboard.E),
+	take_player0: game.input.keyboard.addKey(Phaser.Keyboard.L),
+	take_player1: game.input.keyboard.addKey(Phaser.Keyboard.E),
+	throw_player0: game.input.keyboard.addKey(Phaser.Keyboard.K),
+	throw_player1: game.input.keyboard.addKey(Phaser.Keyboard.Q)
 	};
 
 	input.esc = game.input.keyboard.addKey(Phaser.Keyboard.ESC);
@@ -116,15 +121,21 @@ function create()
 	// add_weapon
 	weapons = game.add.group();
 	weapons.enableBody = true;
-	var w1 = weapons.create(
+	createWeapon(weapons, "weaponTexture", 1000);
+	createWeapon(weapons, "weaponTexture", 1000);
+	/*var w1 = weapons.create(
 		game.world.width/2, game.world.height/2, "weaponTexture");
 	w1.body.gravity.y = gravity;
 	w1.body.collideWorldBounds = true;
+	w1.rectangle = new Phaser.Rectangle(w1.position.x,
+		w1.position.y, w1.width. w1.height);
 	
 	var w2 = weapons.create(
 		game.world.width/2, game.world.height/2, "weaponTexture");
 	w2.body.gravity.y = gravity;
 	w2.body.collideWorldBounds = true;
+	w2.rectangle = new Phaser.Rectangle(w1.position.x,
+		w2.position.y, w1.width. w1.height);*/
 
 	// for game world size more than screen size
 	//game.world.setBounds( -1000, -1000, 1000, 1000);
@@ -153,7 +164,7 @@ function create()
 			"playerLegLeftSpriteSheet",
 			"playerLegRightSpriteSheet"], 300, 0.1));
 	player[0].weapon_is_near = true;
-	player[0].takeWeapon(w2);
+	player[0].takeWeapon(weapons.children[0]);
 	// Music
 	sound = game.add.audio("sound");
 	sound.play("all");
@@ -166,9 +177,13 @@ function update()
 		for(var i = 0; i < player.lengthl; i++)
 			temp_dir.push(player[i].dirrection);
 
-
 	switch (curr_state) {
 	case game_state.GAME:
+		for(var i = 0; i < weapons.length; i++)
+		{
+			weapons.children[i].updateRect();
+		}
+		
 		if (!(input.cursors.right.isDown &&
 			input.cursors.left.isDown &&
 			input.cursors.up.isDown &&
@@ -200,13 +215,28 @@ function update()
 		} else if (input.wasd.right.isDown) {
 			player[1].right();
 		}
-
-		if(input.wasd.throw_or_take_player1.isDown) {
-			player[1].takeWeapon(/*Ближнее к игроку оружие*/);
+		if (input.wasd.throw_player0.isDown)
+			player[0].throwWeapon();
+		if (input.wasd.throw_player1.isDown)
+			player[1].throwWeapon();	
+		
+		if (input.wasd.take_player1.isDown) {
+			for(var i = 0; i < weapons.children.length; i++)
+			{			//rashodimsya kak ryad Fur'e
+				let a = Phaser.Rectangle.intersection(player[1].rectangle,
+				 weapons.children[i].rectangle);
+				if(a.width * a.height != 0)
+					player[1].takeWeapon(weapons.children[i]);
+			}	
 		}
-
-		if(input.wasd.throw_or_take_player0.isDown) {
-			player[0].takeWeapon(/*Ближнее к игроку оружие*/);
+		if(input.wasd.take_player0.isDown) {
+			for(var i = 0; i < weapons.children.length; i++)
+			{			//rashodimsya kak ryad Fur'e
+				let a = Phaser.Rectangle.intersection(player[0].rectangle,
+				 weapons.children[i].rectangle);
+				if(a.width * a.height != 0)
+					player[0].takeWeapon(weapons.children[i]);
+			}
 		}
 					
 		break;
@@ -224,9 +254,11 @@ function update()
 		//game.physics.arcade.collide(
 			//player[0].body.sprite,player[1].body.sprite);
 
-			//Earth weapons
-		game.physics.arcade.collide(
-					weapons, platforms);
+		//Each weapons on earth
+	for(var i = 0; i < weapons.children.length; i++)
+		weapons.children[i].on_ground = game.physics.arcade.collide(
+				weapons.children[i], platforms);
+
 	for(var i = 0; i < player.length; i++)
 	{
 		player[i].on_ground =  game.physics.arcade.collide(
@@ -242,5 +274,13 @@ function update()
 
 function render()
 {
+/*for(var i = 0; i < weapons.children.length; i++)
+				if(Phaser.Rectangle.intersection(player[0].rectangle,
+				 weapons.children[i].rectangle))
+			player[0].takeWeapon(weapons.children[i]);
 
+for(var i = 0; i < weapons.children.length; i++)
+				if(Phaser.Rectangle.intersection(player[1].rectangle,
+				 weapons.children[i].rectangle))
+			player[1].takeWeapon(weapons.children[i]);*/
 }
