@@ -64,6 +64,13 @@ function preload()
 	game.load.spritesheet("weaponTexture",
 		"assets/headSpriteSheet.png", 100, 10, 1, 0, 0); // sword
 	// load player texture
+	game.load.spritesheet("player1",
+		"assets/AnimationRun_v1_1.png", 98, 107, 10, 6, 6);//player
+
+	game.load.spritesheet("player2",
+		"assets/AnimationRun_v1_2.png", 98, 107, 10, 6, 6);//player
+
+	/*
 	game.load.spritesheet("playerHeadSpriteSheet",
 		"assets/headSpriteSheet.png", 26, 48, 4, 0, 0);//head
 	game.load.spritesheet("playerBodySpriteSheet",
@@ -72,6 +79,8 @@ function preload()
 		"assets/leftLegSpriteSheet.png", 19, 43, 2, 0, 0);//legs right
 	game.load.spritesheet("playerLegRightSpriteSheet",
 		"assets/rightLegSpriteSheet.png", 14, 45, 2, 0, 0);//legs right
+	game.load.spritesheet("PlayerAll", "assets/cautionJPG.jpg", 98, 107, 2+8, 6, 6);
+	*/
 	/*game.load.audio("sound",
 		"assets/MainThemev2.wav");*/
 	//game.load.image("test1", "assets/test1_v2.0.png");
@@ -121,8 +130,8 @@ function create()
 	// add_weapon
 	weapons = game.add.group();
 	weapons.enableBody = true;
-	createWeapon(weapons, "weaponTexture", 1000);
-	createWeapon(weapons, "weaponTexture", 1000);
+	//createWeapon(weapons, "weaponTexture", 1000);
+	//createWeapon(weapons, "weaponTexture", 1000);
 	/*var w1 = weapons.create(
 		game.world.width/2, game.world.height/2, "weaponTexture");
 	w1.body.gravity.y = gravity;
@@ -148,21 +157,14 @@ function create()
 	
 	// Player 1 init
 	player.push(createPlayer(game, {x:200, y:10}, "#fac",
-		["playerHeadSpriteSheet",
-			"playerBodySpriteSheet",
-			"playerHandLeftSpriteSheet",
-			"playerHandRightSpriteSheet",
-			"playerLegLeftSpriteSheet",
-			"playerLegRightSpriteSheet"], 300, 0.1));
+	 "player1", 300, 0.1, -1));
 			
 	// Player 2 init	
 	player.push(createPlayer(game, {x:100, y:10}, "#fac",
-		["playerHeadSpriteSheet",
-			"playerBodySpriteSheet",
-			"playerHandLeftSpriteSheet",
-			"playerHandRightSpriteSheet",
-			"playerLegLeftSpriteSheet",
-			"playerLegRightSpriteSheet"], 300, 0.1));
+		"player2" , 300, 0.1, 1));
+
+	//player[0].body.sprite.resi
+
 	player[0].takeWeapon(weapons.children[0]);
 	// Music Need host
 //	sound = game.add.audio("sound");
@@ -220,23 +222,29 @@ function update()
 		if (!(input.cursors.right.isDown &&
 			input.cursors.left.isDown &&
 			input.cursors.up.isDown &&
-			input.cursors.downs.isDown )) 
-			player[0].stay();
+			input.cursors.down.isDown )) 
+			{
+				player[0].body.sprite.body.velocity.x = 0;
+			}
 				
 		if (!(input.wasd.right.isDown &&
 				input.wasd.left.isDown &&
 				input.wasd.up.isDown &&
 				input.wasd.down.isDown ))
-				player[1].stay();	
+				{
+					player[1].body.sprite.body.velocity.x = 0;	
+				}
 
 		if (input.cursors.up.isDown) {
 			player[0].jump(); console.log("up");
 		} else if (input.cursors.down.isDown) {	}
 
 		if (input.cursors.left.isDown) {
-			player[0].left(); console.log("left");
+			player[0].left(); 
+			//player[0].setAnimation("run");
 		} else if (input.cursors.right.isDown) {
-			player[0].right(); console.log("right");
+			player[0].right(); 
+			//player[0].setAnimation("run");
 		}
 			
 		if (input.wasd.up.isDown) {
@@ -245,8 +253,10 @@ function update()
 
 		if (input.wasd.left.isDown) {
 			player[1].left();
+			player[1].setAnimation("run");
 		} else if (input.wasd.right.isDown) {
 			player[1].right();
+			player[1].setAnimation("run");
 		}
 		if (input.wasd.throw_player0.isDown)
 			player[0].throwWeapon();
@@ -283,7 +293,9 @@ function update()
 						weapons.children[i].body.enable = c;
 				}	
 		}
-					
+
+			player[0].updateBodyPartsPosition();	
+			player[1].updateBodyPartsPosition();	
 		break;
 	case game_state.PAUSE:
 		// TODO fade
