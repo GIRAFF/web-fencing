@@ -6,51 +6,9 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 {
 	var	main_player,	// Object all sprites
 		frame_rate = 10,
-		/*p_lLeg_sprite = game.add.sprite(position.x,
-			position.y,
-			texture_names[4]),
-		p_rLeg_sprite = game.add.sprite(position.x,
-			position.y,
-			texture_names[5]),
-		p_body_sprite = game.add.sprite(position.x,
-			position.y,
-			texture_names[1]),
-		p_head_sprite = game.add.sprite(position.x,
-			position.y,
-			texture_names[0]),*/
 		p_full_sprite = game.add.sprite(position.x,
 			position.y,
 			texture_names),
-		/*
-			p_lArm_sprite = game.add.sprite(position.x,
-											position.y,
-											texture_names[2]),
-			p_rArm_sprite = game.add.sprite(position.x,
-											position.y,
-											texture_names[3]),
-											*/
-
-		//Create animation here
-		/*p_head_sprite_anim = p_head_sprite.animations.add(
-			"stay",
-			[0,1,2,3,2,1],
-			frame_rate,
-			true),
-		p_body_sprite_anim = p_body_sprite.animations.add(
-			"stay",
-			[0,1,2,3,2,1],
-			frame_rate,
-			true),
-		p_left_leg_sprite_anim = p_lLeg_sprite.animations.add(
-			"stay",
-			[0,1,1],
-			frame_rate/2,
-			true),
-		p_right_leg_sprite_anim = p_rLeg_sprite.animations.add(
-			"stay",
-			[0,1,1],
-			frame_rate/2,
-			true);*/
 		p_full_sprite_anim = p_full_sprite.animations.add("stay", [0,1],
 		frame_rate/5, true);
 		var t = p_full_sprite.animations.add("run", [2,3,4,5,6,7,8,9], 
@@ -70,30 +28,7 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 		is_dead: false,
 		current_animation: "stay",
 		weapon: null, //  weapon by player
-		/*rectangle: new Phaser.Rectangle(p_body_sprite.position.x, 
-			p_body_sprite.position.y, p_body_sprite.width, p_body_sprite.height),*/
-		rectangle: new Phaser.Rectangle(p_full_sprite.position.x, 
-		p_full_sprite.position.y, p_full_sprite.width, p_full_sprite.height),	
 		//Sprites of player here
-		/*head: {
-			animation: p_head_sprite_anim,
-			sprite : p_head_sprite,
-		},
-
-		body: {
-			animation: p_body_sprite_anim,
-			sprite : p_body_sprite
-		},
-
-		leg_left: {
-			animation: p_left_leg_sprite_anim,
-			sprite: p_lLeg_sprite
-		},
-
-		leg_right: {
-			animation: p_right_leg_sprite_anim,
-			sprite: p_rLeg_sprite
-		},*/
 		body: {
 			animation: {
 				stay:p_full_sprite_anim,
@@ -110,6 +45,7 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 			p_sprite.body.gravity.y = gravity;
 			p_sprite.body.collideWorldBounds = true;
 			p_sprite.body.onGround = {onGround: false};
+			p_sprite.body.setSize(35, 107, 34, 0);
 		},
 
 		jump: function ()
@@ -118,7 +54,7 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 				if(this.on_ground && game.time.now > this.jump_time) {
 					this.body.sprite.body.velocity.y = this.jump_power;
 					this.jump_time = game.time.now + 1000;
-					this.setAnimation("jump");
+					//this.setAnimation("jump");
 				}
 			}
 		},
@@ -128,7 +64,8 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 			if(!this.is_dead) {
 				this.dirrection = -1;
 				this.body.sprite.body.velocity.x = - this.horizontal_velocity;
-				this.setAnimation("run");
+				//if(this.on_ground)
+					this.setAnimation("run");
 			}
 		},
 		
@@ -137,7 +74,8 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 			if(!this.is_dead) {
 				this.dirrection = 1;
 				this.body.sprite.body.velocity.x = this.horizontal_velocity;
-				this.setAnimation("run");
+				//if(this.on_ground)
+					this.setAnimation("run");
 			}
 		},
 		// Поднять оружие
@@ -176,11 +114,9 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 		{
 			if(!this.is_dead) {
 				this.throwWeapon(1000);
-				this.initPhysics(this.head.sprite, 0.3, 300);
-				this.initPhysics(this.leg_left.sprite, 0.4, 300);
-				this.initPhysics(this.leg_right.sprite, 0.4, 300);
 				this.is_dead = true;
-				this.body.sprite.height /= 2;
+				this.body.sprite.height /= 4;
+				this.body.sprite.width /= 4;
 			}
 		},
 		//Атака в трёх положениях
@@ -191,7 +127,13 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 		//Атака броском
 		attackThrow: function()
 		{
-			if(!this.is_dead) {}
+			if(!this.is_dead) {
+				if(this.weapon != null)
+				{
+					this.weapon.is_used = false;
+					this.weapon.fly(this.dirrection);
+				}
+			}
 		},
 
 		stay: function ()
@@ -210,60 +152,33 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 			if(!this.is_dead) {
 				if(this.body.sprite.body.velocity.x == 0)
 					this.setAnimation("stay");
-				
-				/*this.rectangle.x = this.body.sprite.position.x;
-				this.rectangle.y = this.body.sprite.position.y;
-				this.rectangle.width = Math.abs(this.body.sprite.width);
-				this.rectangle.height =  Math.abs(this.body.sprite.height);
-
-				//Head relative position
-				this.head.sprite.position.x =
-					this.body.sprite.position.x - this.head.sprite.width / 3 >> 0;
-				this.head.sprite.position.y = this.body.sprite.position.y;
-*/
 				if(this.weapon != null) {
-					this.weapon.position.y =
-					//this.head.sprite.height + this.head.sprite.position.y;
-					this.weapon.position.x = 
-					//this.head.sprite.position.x - this.head.sprite.width;
+					if(!this.weapon.is_fly)
+					{
+						if(this.current_animation == "stay")
+						{
+							this.weapon.position.x = this.body.sprite.position.x+27*this.dirrection;
+							this.weapon.position.y = this.body.sprite.position.y-5;
+							this.weapon.rotation = 0;
+							this.weapon.body.rotation = 0;
+						}
+						else
+						{
+							this.weapon.position.x = this.body.sprite.position.x+10*this.dirrection;
+							this.weapon.position.y = this.body.sprite.position.y-5;
+							//this.weapon.rotation = -0.5*this.dirrection;
+							//this.weapon.body.rotation = -0.5*this.dirrection;
+						}
+					}
 					this.weapon.scale.setTo(this.dirrection, 1);
 				}
-
-				/*if (this.dirrection == 1) {    //If left dirrect
-					this.leg_left.sprite.position.x =
-						this.body.sprite.position.x -
-						this.leg_left.sprite.width + 10;
-					this.leg_left.sprite.position.y = this.body.sprite.position.y +
-						this.body.sprite.height - this.leg_left.sprite.height;
-					
-					this.leg_right.sprite.position.y =
-						this.leg_left.sprite.position.y;
-					this.leg_right.sprite.position.x =
-						this.body.sprite.position.x +
-						this.body.sprite.width - 
-						this.leg_right.sprite.width + 7;
-				} else { //If right dirrect
-					this.leg_left.sprite.position.x =
-						this.body.sprite.position.x + 10;
-					this.leg_left.sprite.position.y = this.body.sprite.position.y +
-						this.body.sprite.height -
-						this.leg_left.sprite.height;
-					this.leg_right.sprite.position.y =
-						this.leg_left.sprite.position.y;
-					this.leg_right.sprite.position.x =
-						this.body.sprite.position.x + 
-						this.leg_right.sprite.width - 8;
-				}*/
 			}
 		},
 		//RotateToHorizontal
 		doReflection: function()
 		{
 			if(!this.is_dead) {
-				//this.head.sprite.scale.setTo( this.dirrection, 1 );
 				this.body.sprite.scale.setTo( this.dirrection, 1 );
-				//this.leg_left.sprite.scale.setTo( this.dirrection, 1 );
-				//this.leg_right.sprite.scale.setTo( this.dirrection, 1 );
 			}
 		},
 		//All animation of player here !
@@ -279,8 +194,6 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 
 	// Enable physics for sprites
 	main_player.initPhysics(main_player.body.sprite, bounce, gravity);
-	//main_player.initPhysics(main_player.leg_left.sprite, 0, 0);
-	//main_player.initPhysics(main_player.leg_right.sprite, 0, 0);
 	//Set start position for sprites
 	main_player.updateBodyPartsPosition();
 

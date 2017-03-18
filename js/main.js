@@ -62,7 +62,7 @@ function preload()
 		'https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js');
 	// load weapon texture
 	game.load.spritesheet("weaponTexture",
-		"assets/headSpriteSheet.png", 100, 10, 1, 0, 0); // sword
+		"assets/rapire.png", 81, 9, 1, 0, 0); // sword
 	// load player texture
 	game.load.spritesheet("player1",
 		"assets/AnimationRun_v1_1.png", 98, 107, 10, 6, 6);//player
@@ -104,7 +104,9 @@ function create()
 	take_player0: game.input.keyboard.addKey(Phaser.Keyboard.L),
 	take_player1: game.input.keyboard.addKey(Phaser.Keyboard.E),
 	throw_player0: game.input.keyboard.addKey(Phaser.Keyboard.K),
-	throw_player1: game.input.keyboard.addKey(Phaser.Keyboard.Q)
+	throw_player1: game.input.keyboard.addKey(Phaser.Keyboard.Q),
+	throw_weapon_into_face0: game.input.keyboard.addKey(Phaser.Keyboard.J),
+	throw_weapon_into_face1: game.input.keyboard.addKey(Phaser.Keyboard.R),
 	};
 
 	input.esc = game.input.keyboard.addKey(Phaser.Keyboard.ESC);
@@ -130,22 +132,20 @@ function create()
 	// add_weapon
 	weapons = game.add.group();
 	weapons.enableBody = true;
-	//createWeapon(weapons, "weaponTexture", 1000);
-	//createWeapon(weapons, "weaponTexture", 1000);
-	/*var w1 = weapons.create(
-		game.world.width/2, game.world.height/2, "weaponTexture");
-	w1.body.gravity.y = gravity;
-	w1.body.collideWorldBounds = true;
-	w1.rectangle = new Phaser.Rectangle(w1.position.x,
-		w1.position.y, w1.width. w1.height);
+	weapons.checkArea =  function(size)
+	{
+		for(var i = 0; i < this.children.length; i++)
+		{
+			if(this.children[i].position.x <= 0 ||
+			   this.children[i].position.x >= size.w ||
+			   this.children[i].position.y <= 0 ||
+			   this.children[i].position.y >= size.h)
+			   		console.log("WARNING");
+		}
+	};
+	createWeapon(weapons, "weaponTexture", 1000, { x:100, y:0});
+	createWeapon(weapons, "weaponTexture", 1000, { x:500, y:500});
 	
-	var w2 = weapons.create(
-		game.world.width/2, game.world.height/2, "weaponTexture");
-	w2.body.gravity.y = gravity;
-	w2.body.collideWorldBounds = true;
-	w2.rectangle = new Phaser.Rectangle(w1.position.x,
-		w2.position.y, w1.width. w1.height);*/
-
 	// for game world size more than screen size
 	//game.world.setBounds( -1000, -1000, 1000, 1000);
 	game.world.setBounds( 0, 0, 800, 600);
@@ -156,16 +156,16 @@ function create()
 		styles[1]);
 	
 	// Player 1 init
-	player.push(createPlayer(game, {x:200, y:10}, "#fac",
+	player.push(createPlayer(game, {x:500, y:10}, "#fac",
 	 "player1", 300, 0.1, -1));
 			
 	// Player 2 init	
-	player.push(createPlayer(game, {x:100, y:10}, "#fac",
+	player.push(createPlayer(game, {x:200, y:10}, "#fac",
 		"player2" , 300, 0.1, 1));
 
-	//player[0].body.sprite.resi
 
 	player[0].takeWeapon(weapons.children[0]);
+	player[1].takeWeapon(weapons.children[1]);
 	// Music Need host
 //	sound = game.add.audio("sound");
 //	sound.play("all");
@@ -186,27 +186,33 @@ function update()
 			weapons.children[i].updateRect();
 		}
 			//for check collision of players
-			//game.physics.arcade.collide(
-				//player[0].body.sprite,player[1].body.sprite);
+			game.physics.arcade.collide(
+				player[0].body.sprite,player[1].body.sprite);
 
-			//Each weapons on earth
+			//Each weapons on earth    bug
 		for(var i = 0; i < weapons.children.length; i++){
 			weapons.children[i].on_ground = game.physics.arcade.collide(
 					weapons.children[i], platforms);
 		}
 
 		// for event die
-		let c = game.physics.arcade.collide(
-			player[0].body.sprite, player[1].weapon);
+		if(player[1].weapon != null)
+		{
+			let c = game.physics.arcade.collide(
+				player[0].body.sprite, player[1].weapon);
 
-		if (c)
-			player[0].die();
+			if (c)
+				player[0].die();
+		}
 
-		c = game.physics.arcade.collide(
-			player[1].body.sprite, player[0].weapon);
+		if(player[0].weapon != null)
+		{
+			let c = game.physics.arcade.collide(
+				player[1].body.sprite, player[0].weapon);
 
-		if (c)
-			player[1].die();
+			if (c)
+				player[1].die();
+		}
 
 
 		for(var i = 0; i < player.length; i++)
@@ -241,10 +247,8 @@ function update()
 
 		if (input.cursors.left.isDown) {
 			player[0].left(); 
-			//player[0].setAnimation("run");
 		} else if (input.cursors.right.isDown) {
 			player[0].right(); 
-			//player[0].setAnimation("run");
 		}
 			
 		if (input.wasd.up.isDown) {
@@ -294,8 +298,22 @@ function update()
 				}	
 		}
 
+		if(input.wasd.throw_weapon_into_face0.isDown) {
+			if (player[0].weapon != null) {
+				player[0].attackThrow();
+			}
+		}
+
+		
+		if(input.wasd.throw_weapon_into_face1.isDown) {
+			if (player[1].weapon != null) {
+				player[1].attackThrow();
+			}
+		}
+
 			player[0].updateBodyPartsPosition();	
 			player[1].updateBodyPartsPosition();	
+			weapons.checkArea({w: game.world.width, h: game.world.height});
 		break;
 	case game_state.PAUSE:
 		// TODO fade
