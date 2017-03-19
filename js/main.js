@@ -193,6 +193,7 @@ function update()
 		for(var i = 0; i < weapons.children.length; i++){
 			weapons.children[i].on_ground = game.physics.arcade.collide(
 					weapons.children[i], platforms);
+					
 		}
 
 		// for event die

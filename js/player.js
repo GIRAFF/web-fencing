@@ -144,6 +144,7 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 		save: function ()
 		{
 			// Save all player properties here
+			
 		},
 
 		//Move secondary sprites to main sprite ( main sprites it is legs С: )

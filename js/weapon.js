@@ -22,6 +22,7 @@ function createWeapon( game_group, texture_name, gravity, position)
                 if(!this.body.touching.none)
                 {
                     console.log("YES");
+                    
                 }
             }
         };
