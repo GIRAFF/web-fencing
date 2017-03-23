@@ -45,7 +45,8 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 			p_sprite.body.gravity.y = gravity;
 			p_sprite.body.collideWorldBounds = true;
 			p_sprite.body.onGround = {onGround: false};
-			p_sprite.body.setSize(35, 107, 34, 0);
+			//p_sprite.body.setSize(35, 107, 34, 0);
+			p_sprite.body.setSize(50, 95, 25, 66);
 		},
 
 		jump: function ()
@@ -195,6 +196,8 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 
 	// Enable physics for sprites
 	main_player.initPhysics(main_player.body.sprite, bounce, gravity);
+
+	main_player.line = new Phaser.Line(0,0,1,1);
 	//Set start position for sprites
 	main_player.updateBodyPartsPosition();
 

@@ -27,7 +27,8 @@ var game,
 	platforms, //platforms  Phaser.game.sprite
 	gravity = 300, //global player gravity
 	wasd = {},
-	weapons; // all weapons
+	weapons, // all weapons
+	line1, line2; // for DEBUG !!!
 
 // script for loading fonts from google fonts.
 WebFontConfig = {
@@ -64,23 +65,16 @@ function preload()
 	game.load.spritesheet("weaponTexture",
 		"assets/rapire.png", 81, 9, 1, 0, 0); // sword
 	// load player texture
-	game.load.spritesheet("player1",
+	/*game.load.spritesheet("player1",
 		"assets/AnimationRun_v1_1.png", 98, 107, 10, 6, 6);//player
+*/
+
+game.load.spritesheet("player1",
+		"assets/pr1.png", 130, 163, 10, 6, 6);//player
 
 	game.load.spritesheet("player2",
-		"assets/AnimationRun_v1_2.png", 98, 107, 10, 6, 6);//player
+		"assets/pr2.png", 130, 163, 10, 6, 6);//player
 
-	/*
-	game.load.spritesheet("playerHeadSpriteSheet",
-		"assets/headSpriteSheet.png", 26, 48, 4, 0, 0);//head
-	game.load.spritesheet("playerBodySpriteSheet",
-		"assets/bodySpriteSheet0.png", 27, 116, 4, 0, 0);//body
-	game.load.spritesheet("playerLegLeftSpriteSheet",
-		"assets/leftLegSpriteSheet.png", 19, 43, 2, 0, 0);//legs right
-	game.load.spritesheet("playerLegRightSpriteSheet",
-		"assets/rightLegSpriteSheet.png", 14, 45, 2, 0, 0);//legs right
-	game.load.spritesheet("PlayerAll", "assets/cautionJPG.jpg", 98, 107, 2+8, 6, 6);
-	*/
 	/*game.load.audio("sound",
 		"assets/MainThemev2.wav");*/
 	//game.load.image("test1", "assets/test1_v2.0.png");
@@ -88,6 +82,9 @@ function preload()
 
 function create()
 {
+
+	line1 = new Phaser.Line(0,0,1,1);
+	line2 = new Phaser.Line(0,0,1,1);
 
 	game.physics.startSystem(Phaser.Physics.ARCADE);
 	game.stage.backgroundColor = "#000";
@@ -164,8 +161,8 @@ function create()
 		"player2" , 300, 0.1, 1));
 
 
-	player[0].takeWeapon(weapons.children[0]);
-	player[1].takeWeapon(weapons.children[1]);
+	//player[0].takeWeapon(weapons.children[0]);
+	//player[1].takeWeapon(weapons.children[1]);
 	// Music Need host
 //	sound = game.add.audio("sound");
 //	sound.play("all");
@@ -329,5 +326,22 @@ function update()
 
 function render()
 {
+	line1.setTo(player[0].body.sprite.body.position.x,
+				     player[0].body.sprite.body.position.y,
+				     player[0].body.sprite.body.position.x +
+					 player[0].body.sprite.body.width,
+					 player[0].body.sprite.body.position.y +
+					 player[0].body.sprite.body.height);
 
+	line2.setTo(player[1].body.sprite.body.position.x,
+				     player[1].body.sprite.body.position.y,
+				     player[1].body.sprite.body.position.x +
+					 player[1].body.sprite.body.width,
+					 player[1].body.sprite.body.position.y +
+					 player[1].body.sprite.body.height);
+
+	game.debug.geom(line1);
+    game.debug.rectangle(line1);
+	game.debug.geom(line2);
+    game.debug.rectangle(line2);
 }
