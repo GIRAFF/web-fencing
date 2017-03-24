@@ -1,7 +1,7 @@
 /* player.js */
 
-//  Create player Phaser.game.sprite texture_names[6]:
-//  head, body, lArm, rArm, lLeg, rLeg
+//Create player Phaser.game.sprite texture_names[6]-
+//head 0, body 1, lArm 2, rArm 3, lLeg 4, rLeg 5
 function createPlayer(game, position, color, texture_names, gravity, bounce)
 {
 	var	main_player,	// Object all sprites
@@ -48,11 +48,23 @@ function createPlayer(game, position, color, texture_names, gravity, bounce)
 			[0,1,1],
 			frame_rate/2,
 			true);
-
+			
 	//Class Player, add properties here
 	main_player = {
 		//Properties here
 		dirrection: 1, // 1 - left, -1 - right 
+		jump_power: 2300,
+		right_left_power:9000,
+		jump_time: 0,
+		move_time: 0,
+		on_ground: false,
+		horizontal_velocity: 400,
+		is_dead: false,
+		current_animation: "stay",
+		weapon: null, //  weapon by player
+		rectangle: new Phaser.Rectangle(p_body_sprite.position.x, 
+			p_body_sprite.position.y, p_body_sprite.width, p_body_sprite.height),
+			
 		//Sprites of player here
 		head: {
 			animation: p_head_sprite_anim,
@@ -83,79 +95,184 @@ function createPlayer(game, position, color, texture_names, gravity, bounce)
 			p_sprite.body.collideWorldBounds = true;
 			p_sprite.body.onGround = {onGround: false};
 		},
+
+		jump: function ()
+		{
+			if(!this.is_dead) {
+				if(this.on_ground && game.time.now > this.jump_time) {
+					this.body.sprite.body.velocity.y = this.jump_power;
+					this.jump_time = game.time.now + 1000;
+					this.setAnimation("jump");
+					this.updateBodyPartsPosition();
+				}
+			}
+		},
+
+		left: function ()
+		{
+			if(!this.is_dead) {
+				this.dirrection = 1;
+				this.body.sprite.body.velocity.x = - this.horizontal_velocity;
+				this.setAnimation("run_left");
+				this.updateBodyPartsPosition();
+			}
+		},
+		
+		right: function ()
+		{
+			if(!this.is_dead) {
+				this.dirrection = -1;
+				this.body.sprite.body.velocity.x = this.horizontal_velocity;
+				this.setAnimation("run_right");
+				this.updateBodyPartsPosition();	
+			}
+		},
+		// Поднять оружие
+		takeWeapon: function (w)
+		{
+			if(!this.is_dead) {
+				if(this.weapon == null )
+				{
+					if(w != null && !w.is_used) {
+						this.weapon = w;
+						this.weapon.is_used = true;
+						this.weapon.body.enable = true;
+						this.weapon.body.gravity.y = 0;
+					}
+				}
+			}
+		},
+		// Уронить оружие
+		throwWeapon: function (gravity)
+		{
+			if(!this.is_dead) {
+				if(this.weapon != null) {
+					this.weapon.body.enable = true;
+					if(gravity != null)
+						this.weapon.body.gravity.y = gravity;
+					else
+						this.weapon.body.gravity.y = 800;
+					
+					this.weapon.is_used = false;
+					this.weapon = null;
+				}
+			}
+		},
+		// Умереть...
+		die: function()
+		{
+			if(!this.is_dead) {
+				this.throwWeapon(1000);
+				this.initPhysics(this.head.sprite, 0.3, 300);
+				this.initPhysics(this.leg_left.sprite, 0.4, 300);
+				this.initPhysics(this.leg_right.sprite, 0.4, 300);
+				this.is_dead = true;
+				this.body.sprite.height /= 2;
+			}
+		},
+		//Атака в трёх положениях
+		attackSimple: function ()
+		{
+			if(!this.is_dead) {}
+		},
+		//Атака броском
+		attackThrow: function()
+		{
+			if(!this.is_dead) {}
+		},
+
+		stay: function ()
+		{
+			this.setAnimation("stay");
+			this.body.sprite.body.velocity.x = 0;
+			this.updateBodyPartsPosition();
+		},
+
+		save: function ()
+		{
+			// Save all player properties here
+		},
+
 		//Move secondary sprites to main sprite ( main sprites it is legs С: )
 		updateBodyPartsPosition: function()
-		{	//Head relative position
-			this.head.sprite.position.x =
-				this.body.sprite.position.x - this.head.sprite.width / 3 >> 0;
-			this.head.sprite.position.y = this.body.sprite.position.y;
+		{	
+			if(!this.is_dead) {
+				this.rectangle.x = this.body.sprite.position.x;
+				this.rectangle.y = this.body.sprite.position.y;
+				this.rectangle.width = Math.abs(this.body.sprite.width);
+				this.rectangle.height =  Math.abs(this.body.sprite.height);
 
-			if (this.dirrection == 1) {    //If left dirrect
-				this.leg_left.sprite.position.x =
-					this.body.sprite.position.x -
-					this.leg_left.sprite.width + 10;
-				this.leg_left.sprite.position.y = this.body.sprite.position.y +
-					this.body.sprite.height - this.leg_left.sprite.height;
+				//Head relative position
+				this.head.sprite.position.x =
+					this.body.sprite.position.x - this.head.sprite.width / 3 >> 0;
+				this.head.sprite.position.y = this.body.sprite.position.y;
 
-				this.leg_right.sprite.position.y =
-					this.leg_left.sprite.position.y;
-				this.leg_right.sprite.position.x =
-					this.body.sprite.position.x +
-					this.body.sprite.width - 
-					this.leg_right.sprite.width + 7;
-			} else { //If right dirrect
-				this.leg_left.sprite.position.x =
-					this.body.sprite.position.x + 10;
-				this.leg_left.sprite.position.y = this.body.sprite.position.y +
-					this.body.sprite.height -
-					this.leg_left.sprite.height;
-				this.leg_right.sprite.position.y =
-					this.leg_left.sprite.position.y;
-				this.leg_right.sprite.position.x =
-					this.body.sprite.position.x + 
-					this.leg_right.sprite.width - 8;
+				if(this.weapon != null) {
+					this.weapon.position.y =
+					this.head.sprite.height + this.head.sprite.position.y;
+					this.weapon.position.x = 
+					this.head.sprite.position.x - this.head.sprite.width;
+					this.weapon.scale.setTo(this.dirrection, 1);
+				}
+
+				if (this.dirrection == 1) {    //If left dirrect
+					this.leg_left.sprite.position.x =
+						this.body.sprite.position.x -
+						this.leg_left.sprite.width + 10;
+					this.leg_left.sprite.position.y = this.body.sprite.position.y +
+						this.body.sprite.height - this.leg_left.sprite.height;
+					
+					this.leg_right.sprite.position.y =
+						this.leg_left.sprite.position.y;
+					this.leg_right.sprite.position.x =
+						this.body.sprite.position.x +
+						this.body.sprite.width - 
+						this.leg_right.sprite.width + 7;
+				} else { //If right dirrect
+					this.leg_left.sprite.position.x =
+						this.body.sprite.position.x + 10;
+					this.leg_left.sprite.position.y = this.body.sprite.position.y +
+						this.body.sprite.height -
+						this.leg_left.sprite.height;
+					this.leg_right.sprite.position.y =
+						this.leg_left.sprite.position.y;
+					this.leg_right.sprite.position.x =
+						this.body.sprite.position.x + 
+						this.leg_right.sprite.width - 8;
+				}
 			}
-
 		},
 		//RotateToHorizontal
 		doReflection: function()
 		{
-			this.head.sprite.scale.setTo( this.dirrection, 1 );
-			this.body.sprite.scale.setTo( this.dirrection, 1 );
-			this.leg_left.sprite.scale.setTo( this.dirrection, 1 );
-			this.leg_right.sprite.scale.setTo( this.dirrection, 1 );
-
+			if(!this.is_dead) {
+				this.head.sprite.scale.setTo( this.dirrection, 1 );
+				this.body.sprite.scale.setTo( this.dirrection, 1 );
+				this.leg_left.sprite.scale.setTo( this.dirrection, 1 );
+				this.leg_right.sprite.scale.setTo( this.dirrection, 1 );
+			}
 		},
 		//All animation of player here !
 		setAnimation: function( animation_name )
 		{
-			this.head.animation.enableUpdate = true;
-			this.head.animation.play( animation_name, 30, true);
-			this.body.animation.enableUpdate = true;
-			this.body.animation.play(animation_name, 4, true);
-			this.leg_left.animation.play(animation_name, 4, true);
-			this.leg_right.animation.play(animation_name, 4, true);
-		},
-
-		debugInfoToConsole: function()
-		{
-			console.log("head.x = %d, head.y = %d, \
-							 body.x = %d, body.y = %d, \
-							 legL.x = %d, legL.y = %d, \
-							 legR.x = %d, legR.y = %d",
-				this.head.sprite.position.x, this.head.sprite.position.y,
-				this.head.sprite.position.x, this.head.sprite.position.y,
-				this.leg_left.sprite.position.x,
-				this.leg_left.sprite.position.y,
-				this.leg_right.sprite.position.x,
-				this.leg_right.sprite.position.y);
+			if(this.current_animation != animation_name)
+			{
+				this.current_animation = animation_name;
+				this.head.animation.play( animation_name, 30, true);
+				this.body.animation.play(animation_name, 4, true);
+				this.leg_left.animation.play(animation_name, 4, true);
+				this.leg_right.animation.play(animation_name, 4, true);
+			}
 		}
 	};
 
 	// Enable physics for sprites
-	main_player.initPhysics( main_player.body.sprite, bounce, gravity);
+	main_player.initPhysics(main_player.body.sprite, bounce, gravity);
+	//main_player.initPhysics(main_player.leg_left.sprite, 0, 0);
+	//main_player.initPhysics(main_player.leg_right.sprite, 0, 0);
 	//Set start position for sprites
 	main_player.updateBodyPartsPosition();
-	//positionBodyParts( main_player );
+
 	return main_player;
+
 }
