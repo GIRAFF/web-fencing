@@ -79,24 +79,33 @@ function create()
 	input.esc = game.input.keyboard.addKey(Phaser.Keyboard.ESC);
 	input.esc.onDown.add(function()
 		{
+			// TODO fade
 			switch (curr_state) {
 			case game_state.GAME:
 				curr_state = game_state.PAUSE;
+				pause_label = game.add.text(game.world.centerX - 200,
+					game.world.centerY,
+					"Press ESC to contunue",
+					styles[0]);
+				pause_label.anchor.setTo(0.5, 0.5);
+				game.paused = true;
 			break;
 			case game_state.PAUSE:
 				curr_state = game_state.GAME;
+				pause_label.destroy();
+				game.paused = false;
 			break;
 			}
 		});
 	// for game world size more than screen size
 	//game.world.setBounds( -1000, -1000, 1000, 1000);
-	game.world.setBounds( 0, 0, 800, 600);
+	game.world.setBounds(0, 0, 800, 600);
 
 	text = game.add.text(game.world.centerX,
 		game.world.centerY,
 		"this game",
 		styles[1]);
-	
+
 	// Player init
 	player.push(createPlayer(game, {x:100, y:10}, "#fac",
 		["playerHeadSpriteSheet",
@@ -138,11 +147,6 @@ function update()
 		}
 		break;
 	case game_state.PAUSE:
-		// TODO fade
-		text = game.add.text(game.world.centerX - 200,
-			game.world.centerY,
-			"Press ESC to contunue",
-			styles[0]);
 	break;
 	default: break;	
 	}
