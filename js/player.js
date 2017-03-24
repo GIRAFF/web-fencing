@@ -11,8 +11,11 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 			texture_names),
 		p_full_sprite_anim = p_full_sprite.animations.add("stay", [0,1],
 		frame_rate/5, true);
-		var t = p_full_sprite.animations.add("run", [2,3,4,5,6,7,8,9], 
-		frame_rate, true);
+		var t1 = p_full_sprite.animations.add("run_with_weapon",
+		 [2,3,4,5,6,7,8,9], frame_rate, true),
+		t2 = p_full_sprite.animations.add("run_no_weapon", 
+		[10, 11, 12, 13, 14, 15, 16, 17], frame_rate, true);
+
 		p_full_sprite.anchor.set(0.5, 0.5);
 			
 	//Class Player, add properties here
@@ -32,7 +35,9 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 		body: {
 			animation: {
 				stay:p_full_sprite_anim,
-				run:t
+				run_with_weapon: t1,
+				run_no_weapon: t2
+				
 			},
 			sprite: p_full_sprite
 		},
@@ -66,7 +71,13 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 				this.dirrection = -1;
 				this.body.sprite.body.velocity.x = - this.horizontal_velocity;
 				//if(this.on_ground)
-					this.setAnimation("run");
+					
+				if(this.weapon == null)	{
+					this.setAnimation("run_no_weapon");
+				}
+				else {
+					this.setAnimation("run_with_weapon");
+				}
 			}
 		},
 		
@@ -76,7 +87,12 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 				this.dirrection = 1;
 				this.body.sprite.body.velocity.x = this.horizontal_velocity;
 				//if(this.on_ground)
-					this.setAnimation("run");
+				if(this.weapon == null)	{
+					this.setAnimation("run_no_weapon");
+				}
+				else {
+					this.setAnimation("run_with_weapon");
+				}
 			}
 		},
 		// Поднять оружие

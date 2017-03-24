@@ -28,7 +28,7 @@ var game,
 	gravity = 300, //global player gravity
 	wasd = {},
 	weapons, // all weapons
-	line1, line2; // for DEBUG !!!
+	line1, line2, line3, line4; // for DEBUG !!!
 
 // script for loading fonts from google fonts.
 WebFontConfig = {
@@ -70,10 +70,10 @@ function preload()
 */
 
 game.load.spritesheet("player1",
-		"assets/pr1.png", 130, 163, 10, 6, 6);//player
+		"assets/pr1.png", 130, 163, 19, 6, 6);//player
 
 	game.load.spritesheet("player2",
-		"assets/pr2.png", 130, 163, 10, 6, 6);//player
+		"assets/pr2.png", 130, 163, 19, 6, 6);//player
 
 	/*game.load.audio("sound",
 		"assets/MainThemev2.wav");*/
@@ -85,6 +85,8 @@ function create()
 
 	line1 = new Phaser.Line(0,0,1,1);
 	line2 = new Phaser.Line(0,0,1,1);
+	line3 = new Phaser.Line(0,0,1,1);
+	line4 = new Phaser.Line(0,0,1,1);
 
 	game.physics.startSystem(Phaser.Physics.ARCADE);
 	game.stage.backgroundColor = "#000";
@@ -255,10 +257,8 @@ function update()
 
 		if (input.wasd.left.isDown) {
 			player[1].left();
-			player[1].setAnimation("run");
 		} else if (input.wasd.right.isDown) {
 			player[1].right();
-			player[1].setAnimation("run");
 		}
 		if (input.wasd.throw_player0.isDown)
 			player[0].throwWeapon();
@@ -344,4 +344,26 @@ function render()
     game.debug.rectangle(line1);
 	game.debug.geom(line2);
     game.debug.rectangle(line2);
+
+	if(player[0].weapon != null) {
+		line3.setTo(player[0].weapon.body.position.x,
+				     player[0].weapon.body.position.y,
+				     player[0].weapon.body.position.x +
+					 player[0].weapon.body.width,
+					 player[0].weapon.body.position.y +
+					 player[0].weapon.body.height);
+		game.debug.geom(line3);
+    game.debug.rectangle(line3);
+	}
+
+	if(player[1].weapon != null) {
+		line4.setTo(player[1].weapon.body.position.x,
+				     player[1].weapon.body.position.y,
+				     player[1].weapon.body.position.x +
+					 player[1].weapon.body.width,
+					 player[1].weapon.body.position.y +
+					 player[1].weapon.body.height);
+		game.debug.geom(line4);
+    game.debug.rectangle(line4);
+	}
 }
