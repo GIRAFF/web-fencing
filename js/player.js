@@ -1,7 +1,22 @@
 /* player.js */
 
-//Create player Phaser.game.sprite texture_names[7]-
-//head 0, body 1, lArm 2, rArm 3, lLeg 4, rLeg 5, full 6
+/*
+This future class player...
+
+class Player
+{
+	constructor(game, position, color, texture_name, gravity, bounce, dir)
+	{
+		this.dirrection = dir;
+		this.jump_velocity = 2350;
+		this.horizontal_velocity = 9000;
+		this.jump_time = 0;
+		this.move_time = 0;
+		this.on_ground = false;
+		
+	}
+}
+*/
 function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 {
 	var	main_player,	// Object all sprites
@@ -22,7 +37,7 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 	main_player = {
 		//Properties here
 		dirrection: di, // 1 - left, -1 - right 
-		jump_power: 2300,
+		jump_power: 2350,
 		right_left_power:9000,
 		jump_time: 0,
 		move_time: 0,
@@ -50,6 +65,7 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 			p_sprite.body.gravity.y = gravity;
 			p_sprite.body.collideWorldBounds = true;
 			p_sprite.body.onGround = {onGround: false};
+			p_sprite.body.maxVelocity = {x: 9999999, y: 9999999};
 			//p_sprite.body.setSize(35, 107, 34, 0);
 			p_sprite.body.setSize(50, 95, 25, 66);
 		},
@@ -132,8 +148,9 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 			if(!this.is_dead) {
 				this.throwWeapon(1000);
 				this.is_dead = true;
-				this.body.sprite.height /= 4;
-				this.body.sprite.width /= 4;
+				this.setAnimation("stay");
+				this.body.sprite.tint = 0xFF0000;
+				this.body.sprite.body.enable = true;
 			}
 		},
 		//Атака в трёх положениях
@@ -164,7 +181,7 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 			
 		},
 
-		//Move secondary sprites to main sprite ( main sprites it is legs С: )
+		//Move secondary sprites to main sprite ( main sprites it is body С: )
 		updateBodyPartsPosition: function()
 		{	
 			if(!this.is_dead) {
@@ -175,17 +192,19 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 					{
 						if(this.current_animation == "stay")
 						{
-							this.weapon.position.x = this.body.sprite.position.x+27*this.dirrection;
-							this.weapon.position.y = this.body.sprite.position.y-5;
+							this.weapon.position.x = this.body.sprite.position.x+10*this.dirrection;
+							this.weapon.position.y = this.body.sprite.position.y+22;
 							this.weapon.rotation = 0;
 							this.weapon.body.rotation = 0;
+							this.weapon.alpha = 1;
 						}
 						else
 						{
-							this.weapon.position.x = this.body.sprite.position.x+10*this.dirrection;
+							this.weapon.position.x = this.body.sprite.position.x-18*this.dirrection;
 							this.weapon.position.y = this.body.sprite.position.y-5;
-							//this.weapon.rotation = -0.5*this.dirrection;
-							//this.weapon.body.rotation = -0.5*this.dirrection;
+							this.weapon.width = 0;
+							this.weapon.height = 0;
+							this.weapon.alpha = 0;
 						}
 					}
 					this.weapon.scale.setTo(this.dirrection, 1);

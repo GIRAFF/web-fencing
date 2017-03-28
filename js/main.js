@@ -1,7 +1,8 @@
 /* main.js */
 
 // for our Phaser.Game
-var game,
+var isdebug = true,
+	game,
 	game_state = {
 		MENU: 0,
 		CONFIG: 1,
@@ -156,11 +157,11 @@ function create()
 	
 	// Player 1 init
 	player.push(createPlayer(game, {x:500, y:10}, "#fac",
-	 "player1", 300, 0.1, -1));
+	 "player1", 500, 0.1, -1));
 			
 	// Player 2 init	
 	player.push(createPlayer(game, {x:200, y:10}, "#fac",
-		"player2" , 300, 0.1, 1));
+		"player2" , 500, 0.1, 1));
 
 
 	//player[0].takeWeapon(weapons.children[0]);
@@ -183,6 +184,26 @@ function update()
 		for(var i = 0; i < weapons.length; i++)
 		{
 			weapons.children[i].updateRect();
+			if(weapons.children[i].is_fly) {
+				 if(game.physics.arcade.collide(
+					weapons.children[i], platforms)) {
+					weapons.children[i].body.velocity.x = 0;
+					weapons.children[i].is_used = false;
+					weapons.children[i].is_fly = false;
+					}
+				 if(game.physics.arcade.collide(
+					weapons.children[i], player[0].body.sprite.body)) {
+					weapons.children[i].body.velocity.x = 0;
+					weapons.children[i].is_used = false;
+					weapons.children[i].is_fly = false;
+					}
+				 if(game.physics.arcade.collide(
+					weapons.children[i], player[1].body.sprite.body)) {
+					weapons.children[i].body.velocity.x = 0;
+					weapons.children[i].is_used = false;
+					weapons.children[i].is_fly = false;
+					}
+			}
 		}
 			//for check collision of players
 			game.physics.arcade.collide(
@@ -195,23 +216,32 @@ function update()
 					
 		}
 
+		if(player[0].weapon != null && player[1].weapon != null) {
+			var t = game.physics.arcade.collide(
+					player[0].weapon, player[1].weapon);
+					if(t) {
+						player[0].weapon.tint = 0xFFFF00;
+						player[1].weapon.tint = 0xFFFF00;
+					} else {
+						player[0].weapon.tint = 0xFFFFFF;
+						player[1].weapon.tint = 0xFFFFFF;
+					}
+		}
+
 		// for event die
-		if(player[1].weapon != null)
-		{
+		if (player[1].weapon != null) {
 			let c = game.physics.arcade.collide(
 				player[0].body.sprite, player[1].weapon);
 
-			if (c)
-				player[0].die();
+			if (c) player[0].die();
+
 		}
 
-		if(player[0].weapon != null)
-		{
+		if (player[0].weapon != null) {
 			let c = game.physics.arcade.collide(
 				player[1].body.sprite, player[0].weapon);
 
-			if (c)
-				player[1].die();
+			if (c)	player[1].die();
 		}
 
 
@@ -326,6 +356,8 @@ function update()
 
 function render()
 {
+	if(isdebug)
+	{
 	line1.setTo(player[0].body.sprite.body.position.x,
 				     player[0].body.sprite.body.position.y,
 				     player[0].body.sprite.body.position.x +
@@ -365,5 +397,6 @@ function render()
 					 player[1].weapon.body.height);
 		game.debug.geom(line4);
     game.debug.rectangle(line4);
+	}
 	}
 }
