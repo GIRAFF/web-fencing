@@ -270,7 +270,7 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 							this.unsignedMod(this.weapon_position + change, 3);
 					this.weapon_time = game.time.now + 300;
 				}
-			}
+			}                           
 			console.log(this.weapon_position);
 		}
 	};
