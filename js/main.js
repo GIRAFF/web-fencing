@@ -71,10 +71,10 @@ function preload()
 */
 
 game.load.spritesheet("player1",
-		"assets/pr1.png", 130, 163, 19, 6, 6);//player
+		"assets/pr00.png", 130, 163, 22, 6, 6);//player
 
 game.load.spritesheet("player2",
-		"assets/pr2.png", 130, 163, 19, 6, 6);//player
+		"assets/pr01.png", 130, 163, 22, 6, 6);//player
 
 
 	/*game.load.audio("sound",
