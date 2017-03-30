@@ -73,8 +73,9 @@ function preload()
 game.load.spritesheet("player1",
 		"assets/pr1.png", 130, 163, 19, 6, 6);//player
 
-	game.load.spritesheet("player2",
+game.load.spritesheet("player2",
 		"assets/pr2.png", 130, 163, 19, 6, 6);//player
+
 
 	/*game.load.audio("sound",
 		"assets/MainThemev2.wav", true);*/
@@ -83,7 +84,6 @@ game.load.spritesheet("player1",
 
 function create()
 {
-
 	line1 = new Phaser.Line(0,0,1,1);
 	line2 = new Phaser.Line(0,0,1,1);
 	line3 = new Phaser.Line(0,0,1,1);
@@ -112,16 +112,25 @@ function create()
 		attack_player0: game.input.keyboard.addKey(Phaser.Keyboard.U),
 		attack_player1: game.input.keyboard.addKey(Phaser.Keyboard.X),
 	};
-
 	input.esc = game.input.keyboard.addKey(Phaser.Keyboard.ESC);
+	// pause
 	input.esc.onDown.add(function()
 		{
+			// TODO fade
 			switch (curr_state) {
 			case game_state.GAME:
 				curr_state = game_state.PAUSE;
+				pause_label = game.add.text(game.world.centerX - 200,
+					game.world.centerY,
+					"Press ESC to contunue",
+					styles[0]);
+				pause_label.anchor.setTo(0.5, 0.5);
+				game.paused = true;
 			break;
 			case game_state.PAUSE:
 				curr_state = game_state.GAME;
+				pause_label.destroy();
+				game.paused = false;
 			break;
 			}
 		});
@@ -152,13 +161,13 @@ function create()
 	
 	// for game world size more than screen size
 	//game.world.setBounds( -1000, -1000, 1000, 1000);
-	game.world.setBounds( 0, 0, 800, 600);
+	game.world.setBounds(0, 0, 800, 600);
 
 	text = game.add.text(game.world.centerX,
 		game.world.centerY,
 		"this game",
 		styles[1]);
-	
+
 	// Player 1 init
 	player.push(createPlayer(game, {x:500, y:10}, "#fac",
 	 "player1", 500, 0.1, -1));
@@ -213,12 +222,11 @@ function update()
 				player[0].body.sprite,player[1].body.sprite);
 
 			//Each weapons on earth    bug
-		for(var i = 0; i < weapons.children.length; i++){
-			weapons.children[i].on_ground = game.physics.arcade.collide(
+			for (var i = 0; i < weapons.children.length; i++) {
+				weapons.children[i].on_ground = game.physics.arcade.collide(
 					weapons.children[i], platforms);
-					
-		}
-
+			}
+      
 		if(player[0].weapon != null && player[1].weapon != null) {
 			var t = game.physics.arcade.collide(
 					player[0].weapon, player[1].weapon);
@@ -246,33 +254,31 @@ function update()
 
 			if (c)	player[1].die();
 		}
+			for (var i = 0; i < player.length; i++)	{
+				// Player with platforms collide
+				player[i].on_ground =  game.physics.arcade.collide(
+					player[i].body.sprite, platforms);
 
+				//for update position head,legs and arms
+				if (player[i].dirrection != temp_dir[i]) {
+					player[i].doReflection();
+				}
+			}
 
-		for(var i = 0; i < player.length; i++)
-		{	// Player with platforms collide
-			player[i].on_ground =  game.physics.arcade.collide(
-				player[i].body.sprite, platforms);
-			
-			//for update position head,legs and arms
-			if (player[i].dirrection != temp_dir[i]) player[i].doReflection();
-		}
-		
-	// Commands input
-		if (!(input.cursors.right.isDown &&
-			input.cursors.left.isDown &&
-			input.cursors.up.isDown &&
-			input.cursors.down.isDown )) 
-			{
+			// Commands input
+			if (!(input.cursors.right.isDown &&
+				input.cursors.left.isDown &&
+				input.cursors.up.isDown &&
+				input.cursors.down.isDown )) {
 				player[0].body.sprite.body.velocity.x = 0;
 			}
-				
-		if (!(input.wasd.right.isDown &&
+
+			if (!(input.wasd.right.isDown &&
 				input.wasd.left.isDown &&
 				input.wasd.up.isDown &&
-				input.wasd.down.isDown ))
-				{
-					player[1].body.sprite.body.velocity.x = 0;	
-				}
+				input.wasd.down.isDown )) {
+				player[1].body.sprite.body.velocity.x = 0;	
+			}
 
 		if (input.wasd.jump_player0.isDown)	player[0].jump(); 
 
@@ -297,14 +303,14 @@ function update()
 				{	
 					let c = weapons.children[i].body.enable;
 						weapons.children[i].body.enable = true;
-					if(game.physics.arcade.intersects(
-						player[1].body.sprite.body,
-						weapons.children[i].body))
-						player[1].takeWeapon(weapons.children[i]);
-					else
-						weapons.children[i].body.enable = c;
-				}	
-		}
+						if(game.physics.arcade.intersects(
+							player[1].body.sprite.body,
+							weapons.children[i].body))
+							player[1].takeWeapon(weapons.children[i]);
+						else
+							weapons.children[i].body.enable = c;
+					}	
+			}
 
 		if(input.cursors.down.isDown && player[0].weapon == null) {
 			if(player[0].weapon == null)
@@ -312,14 +318,14 @@ function update()
 				{	
 					let c = weapons.children[i].body.enable;
 						weapons.children[i].body.enable = true;
-					if(game.physics.arcade.intersects(
-						player[0].body.sprite.body,
-						weapons.children[i].body))
-						player[0].takeWeapon(weapons.children[i]);
-					else
-						weapons.children[i].body.enable = c;
-				}	
-		}
+						if (game.physics.arcade.intersects(
+							player[0].body.sprite.body,
+							weapons.children[i].body))
+							player[0].takeWeapon(weapons.children[i]);
+						else
+							weapons.children[i].body.enable = c;
+					}	
+			}
 
 		if(input.wasd.throw_weapon_into_face0.isDown) {
 			if (player[0].weapon != null) 	player[0].attackThrow();
@@ -329,7 +335,6 @@ function update()
 		if(input.wasd.throw_weapon_into_face1.isDown) {
 			if (player[1].weapon != null) 	player[1].attackThrow();
 		}
-
 			if (input.wasd.up.isDown && player[1].weapon != null)
 				player[1].weaponPositionUpdate(-1);
 			if (input.wasd.down.isDown && player[1].weapon != null)
@@ -350,15 +355,10 @@ function update()
 			player[0].updateBodyPartsPosition();	
 			player[1].updateBodyPartsPosition();	
 			weapons.checkArea({w: game.world.width, h: game.world.height});
-		break;
-	case game_state.PAUSE:
-		// TODO fade
-		text = game.add.text(game.world.centerX - 200,
-			game.world.centerY,
-			"Press ESC to contunue",
-			styles[0]);
-	break;
-	default: break;	
+			break;
+		case game_state.PAUSE:
+			break;
+		default: break;	
 	}
 }
 
@@ -367,18 +367,18 @@ function render()
 	if(isdebug)
 	{
 	line1.setTo(player[0].body.sprite.body.position.x,
-				     player[0].body.sprite.body.position.y,
-				     player[0].body.sprite.body.position.x +
-					 player[0].body.sprite.body.width,
-					 player[0].body.sprite.body.position.y +
-					 player[0].body.sprite.body.height);
+		player[0].body.sprite.body.position.y,
+		player[0].body.sprite.body.position.x +
+		player[0].body.sprite.body.width,
+		player[0].body.sprite.body.position.y +
+		player[0].body.sprite.body.height);
 
 	line2.setTo(player[1].body.sprite.body.position.x,
-				     player[1].body.sprite.body.position.y,
-				     player[1].body.sprite.body.position.x +
-					 player[1].body.sprite.body.width,
-					 player[1].body.sprite.body.position.y +
-					 player[1].body.sprite.body.height);
+		player[1].body.sprite.body.position.y,
+		player[1].body.sprite.body.position.x +
+		player[1].body.sprite.body.width,
+		player[1].body.sprite.body.position.y +
+		player[1].body.sprite.body.height);
 
 	game.debug.geom(line1);
     game.debug.rectangle(line1);

@@ -210,16 +210,18 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 					{
 						if(this.current_animation == "stay")
 						{
-							this.weapon.position.x = this.body.sprite.position.x+10*this.dirrection;
+							this.weapon.position.x =
+							 	this.body.sprite.position.x+10*this.dirrection;
 							this.weapon.position.y =
-							this.body.sprite.position.y+22*(this.weapon_position);
+								this.body.sprite.position.y+22*(this.weapon_position);
 							this.weapon.rotation = 0;
 							this.weapon.body.rotation = 0;
 							this.weapon.alpha = 1;
 						}
 						else
 						{
-							this.weapon.position.x = this.body.sprite.position.x-18*this.dirrection;
+							this.weapon.position.x = 
+								this.body.sprite.position.x-18*this.dirrection;
 							this.weapon.position.y = this.body.sprite.position.y-5;
 							this.weapon.width = 0;
 							this.weapon.height = 0;
