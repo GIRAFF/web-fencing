@@ -42,7 +42,7 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 	main_player = {
 		//Properties here
 		dirrection: di, // 1 - left, -1 - right 
-		jump_power: 2350,
+		jump_power: -500,
 		right_left_power:9000,
 		jump_time: 0,
 		move_time: 0,
@@ -178,7 +178,7 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 		attackSimple: function ()
 		{
 			if (!this.is_dead && this.weapon != null && game.time.now > this.weapon_time){
-				this.weapon.body.position.x += 60*this.dirrection;
+				this.weapon.body.position.x += 20*this.dirrection*(3-this.weapon_position);
 				this.weapon_time = game.time.now + 300;
 			}
 		},
