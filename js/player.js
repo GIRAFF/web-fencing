@@ -49,7 +49,7 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 		is_dead: false,
 		current_animation: "stay",
 		weapon: null, //  weapon by player
-		weapon_position: 2,
+		weapon_position: 1,
 		//Sprites of player here
 		body: {
 			animation: {
@@ -211,7 +211,8 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 						if(this.current_animation == "stay")
 						{
 							this.weapon.position.x = this.body.sprite.position.x+10*this.dirrection;
-							this.weapon.position.y = this.body.sprite.position.y+22;
+							this.weapon.position.y =
+							this.body.sprite.position.y+22*(this.weapon_position);
 							this.weapon.rotation = 0;
 							this.weapon.body.rotation = 0;
 							this.weapon.alpha = 1;
@@ -246,13 +247,31 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 			}
 		},
 
+		unsignedMod: function uMod(number, Limit)
+		{
+ 			  if(number > 0) return number%Limit; 
+                else 
+              if(number < 0) 
+                return Limit + number%Limit; 
+              else 
+                return 0; 
+		},
+
 		weaponPositionUpdate: function (change)
 		{
-			if ((change == 1 && this.weapon_position < 4 || change == -1 && this.weapon_position > 1)
-			&& game.time.now > this.weapon_time){
-				this.weapon_position += change;
-				this.weapon_time = game.time.now + 300;
+			if (1 == Math.abs(change)) {
+				if ( game.time.now > this.weapon_time ) {
+					if(change == -1 && this.weapon_position > 0)
+						this.weapon_position = 
+							this.unsignedMod(this.weapon_position + change, 3);
+					else
+						if(change == 1 && this.weapon_position < 2)
+							this.weapon_position = 
+							this.unsignedMod(this.weapon_position + change, 3);
+					this.weapon_time = game.time.now + 300;
+				}
 			}
+			console.log(this.weapon_position);
 		}
 	};
 

@@ -26,7 +26,6 @@ function createWeapon( game_group, texture_name, gravity, position)
 
             }
 
-            console.log("G =" + this.body.gravity.y);
         };
 
         new_weapon.fly = function(dir)
