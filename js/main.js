@@ -12,7 +12,8 @@ var isdebug = true,
 	curr_state = game_state.GAME,
 	text,
 	createText,
-	sound, 
+	sound,
+	camera, 
 	styles = //styles for different text
 	[
 		{ font: "20px UnifrakturMaguntia", fill: "#fac" },
@@ -91,9 +92,7 @@ function create()
 
 	game.physics.startSystem(Phaser.Physics.ARCADE);
 	game.stage.backgroundColor = "#000";
-	// Test player color
-	//var o = game.add.sprite(0, 0, "test1");
-
+	
 	// keyboard control
     input.cursors = game.input.keyboard.createCursorKeys();
 	input.wasd = {
@@ -138,8 +137,8 @@ function create()
 	// earth
 	platforms = game.add.group();
 	platforms.enableBody = true;
-	var ground = platforms.create(0, game.world.height - 40, "a");
-	ground.scale.setTo(40, 1);
+	var ground = platforms.create(-1000, game.height-20, "a");
+	ground.scale.setTo(100, 1);
     ground.body.immovable = true;
 
 	// add_weapon
@@ -160,8 +159,8 @@ function create()
 	createWeapon(weapons, "weaponTexture", 1000, { x:500, y:500});
 	
 	// for game world size more than screen size
-	//game.world.setBounds( -1000, -1000, 1000, 1000);
-	game.world.setBounds(0, 0, 800, 600);
+	game.world.setBounds( -1000, 0, 2000, 600);
+	//game.world.setBounds(0, 0, 800, 600);
 
 	text = game.add.text(game.world.centerX,
 		game.world.centerY,
@@ -169,18 +168,32 @@ function create()
 		styles[1]);
 
 	// Player 1 init
-	player.push(createPlayer(game, {x:500, y:10}, "#fac",
-	 "player1", 500, 0.1, -1));
+	player.push(createPlayer(game, {x:-100, y:100}, "#fac",
+	 "player1", 800, 0.1, -1));
 			
 	// Player 2 init	
-	player.push(createPlayer(game, {x:200, y:10}, "#fac",
-		"player2" , 500, 0.1, 1));
+	player.push(createPlayer(game, {x:-500, y:200}, "#fac",
+		"player2" , 800, 0.1, 1));
 
 
 	//player[0].takeWeapon(weapons.children[0]);
 	//player[1].takeWeapon(weapons.children[1]);
 	// Music Need host
 	//sound = game.add.audio("sound", 1, false, true);
+
+		// Object for camera
+	camera = game.add.sprite(
+		(player[0].body.sprite.position.x-player[1].body.sprite.position.x)/2, 
+		game.world.centerY,
+		"a");
+
+	camera.anchor.setTo(0.5,0.5);
+	game.camera.follow(camera);
+}
+
+function inScreen(p_pos, c_pos, c_width)
+{
+	return ( Math.abs(p_pos.x) <= Math.abs(c_pos.x) + c_width );
 }
 
 function update()
@@ -283,17 +296,25 @@ function update()
 		if (input.wasd.jump_player0.isDown)	player[0].jump(); 
 
 		if (input.cursors.left.isDown) {
-			player[0].left(); 
+		//	if (inScreen(player[0].body.sprite.position,camera.position, 320))
+					player[0].left(); 
+		//	else { /*Если текущий игрок победитель раунда, то меняем уровень влево*/ }
 		} else if (input.cursors.right.isDown) {
-			player[0].right(); 
+		//	if (inScreen(player[0].body.sprite.position, camera.position, 320))
+					player[0].right(); 
+		//	else { /*Если текущий игрок победитель раунда, то меняем уровень вправо*/ }
 		}
 			
 		if (input.wasd.jump_player1.isDown) player[1].jump();
 
 		if (input.wasd.left.isDown) {
-			player[1].left();
+		//	if (inScreen(player[1].body.sprite.position,camera.position, 320))
+					player[1].left();
+		//	else { /*Если текущий игрок победитель раунда, то меняем уровень влево*/ }
 		} else if (input.wasd.right.isDown) {
-			player[1].right();
+		//	if (inScreen(player[1].body.sprite.position,camera.position, 320))
+					player[1].right();
+		//	else { /*Если текущий игрок победитель раунда, то меняем уровень вправо*/ }
 		}
 	
 		
@@ -355,6 +376,13 @@ function update()
 			player[0].updateBodyPartsPosition();	
 			player[1].updateBodyPartsPosition();	
 			weapons.checkArea({w: game.world.width, h: game.world.height});
+
+			// camera
+	
+			camera.position.x = (player[0].body.sprite.position.x +
+								player[1].body.sprite.position.x)/2; 
+
+			
 			break;
 		case game_state.PAUSE:
 			break;
