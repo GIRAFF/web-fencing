@@ -250,11 +250,9 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 		unsignedMod: function uMod(number, Limit)
 		{
  			  if(number > 0) return number%Limit; 
-                else 
-              if(number < 0) 
-                return Limit + number%Limit; 
-              else 
-                return 0; 
+              if(number < 0) return Limit + number%Limit; 
+              
+              return 0; 
 		},
 
 		weaponPositionUpdate: function (change)
