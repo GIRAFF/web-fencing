@@ -97,16 +97,20 @@ function create()
 	// keyboard control
     input.cursors = game.input.keyboard.createCursorKeys();
 	input.wasd = {
-	up: game.input.keyboard.addKey(Phaser.Keyboard.W),
-	down: game.input.keyboard.addKey(Phaser.Keyboard.S),
-	left: game.input.keyboard.addKey(Phaser.Keyboard.A),
-	right: game.input.keyboard.addKey(Phaser.Keyboard.D),
-	take_player0: game.input.keyboard.addKey(Phaser.Keyboard.L),
-	take_player1: game.input.keyboard.addKey(Phaser.Keyboard.E),
-	throw_player0: game.input.keyboard.addKey(Phaser.Keyboard.K),
-	throw_player1: game.input.keyboard.addKey(Phaser.Keyboard.Q),
-	throw_weapon_into_face0: game.input.keyboard.addKey(Phaser.Keyboard.J),
-	throw_weapon_into_face1: game.input.keyboard.addKey(Phaser.Keyboard.R),
+		up: game.input.keyboard.addKey(Phaser.Keyboard.W),
+		down: game.input.keyboard.addKey(Phaser.Keyboard.S),
+		left: game.input.keyboard.addKey(Phaser.Keyboard.A),
+		right: game.input.keyboard.addKey(Phaser.Keyboard.D),
+		take_player0: game.input.keyboard.addKey(Phaser.Keyboard.L),
+		take_player1: game.input.keyboard.addKey(Phaser.Keyboard.E),
+		throw_player0: game.input.keyboard.addKey(Phaser.Keyboard.K),
+		throw_player1: game.input.keyboard.addKey(Phaser.Keyboard.Q),
+		throw_weapon_into_face0: game.input.keyboard.addKey(Phaser.Keyboard.J),
+		throw_weapon_into_face1: game.input.keyboard.addKey(Phaser.Keyboard.R),
+		jump_player0: game.input.keyboard.addKey(Phaser.Keyboard.I),
+		jump_player1: game.input.keyboard.addKey(Phaser.Keyboard.Z),
+		attack_player0: game.input.keyboard.addKey(Phaser.Keyboard.U),
+		attack_player1: game.input.keyboard.addKey(Phaser.Keyboard.X),
 	};
 
 	input.esc = game.input.keyboard.addKey(Phaser.Keyboard.ESC);
@@ -271,9 +275,7 @@ function update()
 					player[1].body.sprite.body.velocity.x = 0;	
 				}
 
-		if (input.cursors.up.isDown) {
-			player[0].jump(); console.log("up");
-		} else if (input.cursors.down.isDown) {	}
+		if (input.wasd.jump_player0.isDown)	player[0].jump(); 
 
 		if (input.cursors.left.isDown) {
 			player[0].left(); 
@@ -281,22 +283,16 @@ function update()
 			player[0].right(); 
 		}
 			
-		if (input.wasd.up.isDown) {
-			player[1].jump();
-		} else if (input.wasd.down.isDown) {	}
+		if (input.wasd.jump_player1.isDown) player[1].jump();
 
 		if (input.wasd.left.isDown) {
 			player[1].left();
 		} else if (input.wasd.right.isDown) {
 			player[1].right();
 		}
-		if (input.wasd.throw_player0.isDown)
-			player[0].throwWeapon();
-
-		if (input.wasd.throw_player1.isDown)
-			player[1].throwWeapon();	
+	
 		
-		if (input.wasd.take_player1.isDown) {
+		if (input.wasd.down.isDown && player[1].weapon == null) {
 			if(player[1].weapon == null)
 				for(var i = 0; i < weapons.children.length; i++)
 				{	
@@ -311,7 +307,7 @@ function update()
 				}	
 		}
 
-		if(input.wasd.take_player0.isDown) {
+		if(input.cursors.down.isDown && player[0].weapon == null) {
 			if(player[0].weapon == null)
 				for(var i = 0; i < weapons.children.length; i++)
 				{	
@@ -327,17 +323,30 @@ function update()
 		}
 
 		if(input.wasd.throw_weapon_into_face0.isDown) {
-			if (player[0].weapon != null) {
-				player[0].attackThrow();
-			}
+			if (player[0].weapon != null) 	player[0].attackThrow();
 		}
 
 		
 		if(input.wasd.throw_weapon_into_face1.isDown) {
-			if (player[1].weapon != null) {
-				player[1].attackThrow();
-			}
+			if (player[1].weapon != null) 	player[1].attackThrow();
 		}
+
+			if (input.wasd.up.isDown && player[1].weapon != null)
+				player[1].weaponPositionUpdate(1);
+			if (input.wasd.down.isDown && player[1].weapon != null)
+				player[1].weaponPositionUpdate(-1);	
+			if (input.cursors.up.isDown && player[0].weapon != null)
+				player[0].weaponPositionUpdate(1);
+			if (input.cursors.down.isDown && player[0].weapon != null)
+				player[0].weaponPositionUpdate(-1);	
+			
+			if (input.wasd.attack_player0.isDown)	player[0].attackSimple();
+			if (input.wasd.attack_player1.isDown)	player[1].attackSimple();
+
+			if (player[0].is_dead &&  game.time.now > player[0].death_time)
+				player[0].respawn(player[1].body.sprite.position, 1);
+			if (player[1].is_dead &&  game.time.now > player[1].death_time)
+				player[1].respawn(player[0].body.sprite.position, -1);
 
 			player[0].updateBodyPartsPosition();	
 			player[1].updateBodyPartsPosition();	
