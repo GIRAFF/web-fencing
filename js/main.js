@@ -71,14 +71,14 @@ function preload()
 */
 
 game.load.spritesheet("player1",
-		"assets/pr1.png", 130, 163, 19, 6, 6);//player
+		"assets/pr00.png", 130, 163, 22, 6, 6);//player
 
 game.load.spritesheet("player2",
-		"assets/pr2.png", 130, 163, 19, 6, 6);//player
+		"assets/pr01.png", 130, 163, 22, 6, 6);//player
 
 
 	/*game.load.audio("sound",
-		"assets/MainThemev2.wav");*/
+		"assets/MainThemev2.wav", true);*/
 	//game.load.image("test1", "assets/test1_v2.0.png");
 }
 
@@ -180,8 +180,7 @@ function create()
 	//player[0].takeWeapon(weapons.children[0]);
 	//player[1].takeWeapon(weapons.children[1]);
 	// Music Need host
-//	sound = game.add.audio("sound");
-//	sound.play("all");
+	//sound = game.add.audio("sound", 1, false, true);
 }
 
 function update()
@@ -337,13 +336,13 @@ function update()
 			if (player[1].weapon != null) 	player[1].attackThrow();
 		}
 			if (input.wasd.up.isDown && player[1].weapon != null)
-				player[1].weaponPositionUpdate(1);
+				player[1].weaponPositionUpdate(-1);
 			if (input.wasd.down.isDown && player[1].weapon != null)
-				player[1].weaponPositionUpdate(-1);	
+				player[1].weaponPositionUpdate(1);	
 			if (input.cursors.up.isDown && player[0].weapon != null)
-				player[0].weaponPositionUpdate(1);
+				player[0].weaponPositionUpdate(-1);
 			if (input.cursors.down.isDown && player[0].weapon != null)
-				player[0].weaponPositionUpdate(-1);	
+				player[0].weaponPositionUpdate(1);	
 			
 			if (input.wasd.attack_player0.isDown)	player[0].attackSimple();
 			if (input.wasd.attack_player1.isDown)	player[1].attackSimple();
