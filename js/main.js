@@ -174,7 +174,7 @@ function create()
 	
 
 	// Player 1 init
-	player.push(createPlayer(game, {x:-100, y:100}, "#fac",
+	player.push(createPlayer(game, {x:-100, y:200}, "#fac",
 	 "player1", 800, 0.1, -1));
 			
 	// Player 2 init	
@@ -182,14 +182,14 @@ function create()
 		"player2" , 800, 0.1, 1));
 
 
-	//player[0].takeWeapon(weapons.children[0]);
-	//player[1].takeWeapon(weapons.children[1]);
+//	player[0].takeWeapon(weapons.children[0]);
+//	player[1].takeWeapon(weapons.children[1]);
 	// Music Need host
 	//sound = game.add.audio("sound", 1, false, true);
 
 		// Object for camera
 	camera = game.add.sprite(
-		(player[0].body.sprite.position.x-player[1].body.sprite.position.x)/2, 
+		(player[0].body.sprite.position.x)/2, 
 		game.world.centerY,
 		"a");
 

@@ -10,6 +10,8 @@ function createWeapon( game_group, texture_name, gravity, position)
         new_weapon.line_debug = new Phaser.Line(0,0,0,0);
 	    new_weapon.collideWorldBounds = true;
         new_weapon.touch_fly = false;
+        new_weapon.original_size = {w: new_weapon.body.width,
+                                    h: new_weapon.body.height};
 
         new_weapon.updateRect = function()
         {
@@ -18,6 +20,7 @@ function createWeapon( game_group, texture_name, gravity, position)
                 this.body.enable = false;
                 this.touch_fly = false;
                 this.is_fly = false;
+                this.alpha = 1;
             }
             else
             if(this.is_used) {

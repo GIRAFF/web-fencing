@@ -56,13 +56,7 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 		current_animation: "stay1",
 		weapon: null, //  weapon by player
 		weapon_position: 1,
-		line_debug: new Phaser.Line(0,0,0,0),
-		weapon_last_hit_box: {
-			x:0,
-			y:0,
-			w:0,
-			h:0
-		},
+		line_debug: new Phaser.Line(0,0,0,0),		
 		//Sprites of player here
 		body: {
 			animation: {
@@ -244,9 +238,7 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 										this.body.sprite.position.y+
 										22*(this.weapon_position-1);
 									this.weapon.rotation = 0;
-									//!!!!!!!!!!!!!!!!!!
-									//здесь обычное тело
-									//!!!!!!!!!!!!!!!!!!
+									this.weapon.body.setSize(this.weapon.original_size.w, this.weapon.original_size.h);
 								 }
 								 else
 								if(this.weapon_position == -1)
@@ -255,18 +247,25 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 										this.body.sprite.position.y+
 										22*(this.weapon_position);
 									this.weapon.rotation = -1.8*this.dirrection;
-									//!!!!!!!!!!!!!!!
-									//вытянутое вверх
-									//!!!!!!!!!!!!!!!
+									this.weapon.body.setSize(this.weapon.original_size.h, -this.weapon.original_size.w );
 								 }
 
 							this.weapon.alpha = 1;
 						}
 						else
 						{
-							this.weapon.position.x = 
-								this.body.sprite.position.x-18*this.dirrection;
-							this.weapon.position.y = this.body.sprite.position.y-5;
+							
+							if(this.weapon_position != -1) {
+								this.weapon.position.x = 
+									this.body.sprite.position.x-18*this.dirrection;
+								this.weapon.position.y = this.body.sprite.position.y-5;
+							}
+							else
+							{
+								this.weapon.position.x = 
+									this.body.sprite.position.x+18*this.dirrection;
+								this.weapon.position.y = this.body.sprite.position.y;
+							}
 							this.weapon.width = 0;
 							this.weapon.height = 0;
 							this.weapon.alpha = 0;
