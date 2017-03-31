@@ -30,9 +30,12 @@ var isdebug = true,
 	gravity = 300, //global player gravity
 	wasd = {},
 	weapons, // all weapons
+	win_or_lose_dir = 0, // -1 - left, 0 - nothing, 1 - right
+	current_winner_label,
 	line1, line2, line3, line4; // for DEBUG !!!
 
 // script for loading fonts from google fonts.
+/*
 WebFontConfig = {
 	active: function()
 	{
@@ -47,10 +50,10 @@ WebFontConfig = {
 	},
 	loading: function(){ console.log("loading"); }
 };
-
+*/
 function init()
 {
-	game = new Phaser.Game(800, 600, Phaser.CANVAS, "game", {
+	game = new Phaser.Game(1000, 600, Phaser.CANVAS, "game", {
 		preload: preload,
 		create: create,
 		update: update,
@@ -146,7 +149,7 @@ function create()
 	// add_weapon
 	weapons = game.add.group();
 	weapons.enableBody = true;
-	weapons.checkArea =  function(size)
+	/*weapons.checkArea =  function(size)
 	{
 		for(var i = 0; i < this.children.length; i++)
 		{
@@ -156,7 +159,7 @@ function create()
 			   this.children[i].position.y >= size.h)
 			   		console.log("WARNING");
 		}
-	};
+	};*/
 	createWeapon(weapons, "weaponTexture", 1000, { x:100, y:0});
 	createWeapon(weapons, "weaponTexture", 1000, { x:500, y:500});
 	
@@ -168,6 +171,7 @@ function create()
 		game.world.centerY,
 		"this game",
 		styles[1]);
+	
 
 	// Player 1 init
 	player.push(createPlayer(game, {x:-100, y:100}, "#fac",
@@ -191,6 +195,12 @@ function create()
 
 	camera.anchor.setTo(0.5,0.5);
 	game.camera.follow(camera);
+
+	current_winner_label = game.add.text(camera.position.x,
+										 40,
+										 win_or_lose_dir,
+										 styles[1]);
+
 }
 
 function inScreen(p_pos, c_pos, c_width)
@@ -252,6 +262,21 @@ function update()
 						player[0].weapon.tint = 0xFFFFFF;
 						player[1].weapon.tint = 0xFFFFFF;
 					}
+		}
+
+
+		for (var i = 0; i < weapons.length; i++) {
+			if(weapons.children[i].is_fly)
+			{
+				let c0 = game.physics.arcade.collide(
+				player[0].body.sprite, weapons.children[i]);
+
+				let c1 = game.physics.arcade.collide(
+				player[1].body.sprite, weapons.children[i]);
+
+				if(c0) { player[0].die(); weapons.children[i].touch_fly = c0;}
+				if(c1) { player[1].die(); weapons.children[i].touch_fly = c1;}
+			}
 		}
 
 		// for event die
@@ -371,20 +396,69 @@ function update()
 			if (input.wasd.attack_player1.isDown)	player[1].attackSimple();
 
 			if (player[0].is_dead &&  game.time.now > player[0].death_time)
-				player[0].respawn(player[1].body.sprite.position, 1);
+				switch(win_or_lose_dir)
+				{
+					case 1: 
+					player[0].respawn(player[0].body.sprite.position, 1);
+					 break;
+					case -1:
+					player[0].respawn(player[0].body.sprite.position, -1);
+					 break;
+					case 0: 
+					player[0].respawn(player[0].body.sprite.position, 1);
+					break;
+				}
+				
+			
 			if (player[1].is_dead &&  game.time.now > player[1].death_time)
-				player[1].respawn(player[0].body.sprite.position, -1);
+				switch(win_or_lose_dir)
+				{
+					case 1: 
+					player[1].respawn(player[1].body.sprite.position, 1);
+					 break;
+					case -1:
+					player[1].respawn(player[1].body.sprite.position, -1);
+					 break;
+					case 0: 
+					player[1].respawn(player[1].body.sprite.position, -1);
+					break;
+				}
+			
 
 			player[0].updateBodyPartsPosition();	
 			player[1].updateBodyPartsPosition();	
-			weapons.checkArea({w: game.world.width, h: game.world.height});
+			// weapons.checkArea({w: game.world.width, h: game.world.height});
 
 			// camera
 	
 			camera.position.x = (player[0].body.sprite.position.x +
-								player[1].body.sprite.position.x)/2; 
+								player[1].body.sprite.position.x)/2;
 
-			
+			current_winner_label.position.x = camera.position.x;
+
+			if(player[0].is_dead && player[1].is_dead)
+				win_or_lose_dir = 0;
+			else
+				if(player[0].is_dead )
+					win_or_lose_dir = 1;
+				else
+					if(player[1].is_dead)
+						win_or_lose_dir = -1;
+
+			current_winner_label.text = win_or_lose_dir;
+
+			if(player[0].weapon != null)
+				for(var i = 0; i < weapons.length; i++)
+					if(!weapons.children[i].on_ground )
+						game.physics.arcade.collide(player[0].weapon, weapons.children[i]);
+
+			if(player[1].weapon != null)
+				for(var i = 0; i < weapons.length; i++)
+					if(!weapons.children[i].on_ground )
+						weapons.children[i].touch_fly = 
+							game.physics.arcade.collide
+								(player[1].weapon, weapons.children[i]);
+
 			break;
 		case game_state.PAUSE:
 			break;
@@ -396,45 +470,15 @@ function render()
 {
 	if(isdebug)
 	{
-	line1.setTo(player[0].body.sprite.body.position.x,
-		player[0].body.sprite.body.position.y,
-		player[0].body.sprite.body.position.x +
-		player[0].body.sprite.body.width,
-		player[0].body.sprite.body.position.y +
-		player[0].body.sprite.body.height);
+	game.debug.geom(player[0].line_debug);
+    game.debug.rectangle(player[0].line_debug);
+	game.debug.geom(player[1].line_debug);
+    game.debug.rectangle(player[1].line_debug);
 
-	line2.setTo(player[1].body.sprite.body.position.x,
-		player[1].body.sprite.body.position.y,
-		player[1].body.sprite.body.position.x +
-		player[1].body.sprite.body.width,
-		player[1].body.sprite.body.position.y +
-		player[1].body.sprite.body.height);
+	for(var i = 0; i < weapons.length; i++) {
+		game.debug.geom(weapons.children[i].line_debug);
+  	  	game.debug.rectangle(weapons.children[i].line_debug);
+	}	
 
-	game.debug.geom(line1);
-    game.debug.rectangle(line1);
-	game.debug.geom(line2);
-    game.debug.rectangle(line2);
-
-	if(player[0].weapon != null) {
-		line3.setTo(player[0].weapon.body.position.x,
-				     player[0].weapon.body.position.y,
-				     player[0].weapon.body.position.x +
-					 player[0].weapon.body.width,
-					 player[0].weapon.body.position.y +
-					 player[0].weapon.body.height);
-		game.debug.geom(line3);
-    game.debug.rectangle(line3);
-	}
-
-	if(player[1].weapon != null) {
-		line4.setTo(player[1].weapon.body.position.x,
-				     player[1].weapon.body.position.y,
-				     player[1].weapon.body.position.x +
-					 player[1].weapon.body.width,
-					 player[1].weapon.body.position.y +
-					 player[1].weapon.body.height);
-		game.debug.geom(line4);
-    game.debug.rectangle(line4);
-	}
 	}
 }

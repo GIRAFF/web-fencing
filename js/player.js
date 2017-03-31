@@ -25,6 +25,8 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 		p_full_sprite = game.add.sprite(position.x,
 			position.y,
 			texture_names),
+		tminus1 = p_full_sprite.animations.add("stay0", 
+		[20,21], frame_rate/5, true),
 		t0 = p_full_sprite.animations.add("stay2", 
 		[0,1], frame_rate/5, true),
 		t1 = p_full_sprite.animations.add("stay1", 
@@ -54,6 +56,13 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 		current_animation: "stay1",
 		weapon: null, //  weapon by player
 		weapon_position: 1,
+		line_debug: new Phaser.Line(0,0,0,0),
+		weapon_last_hit_box: {
+			x:0,
+			y:0,
+			w:0,
+			h:0
+		},
 		//Sprites of player here
 		body: {
 			animation: {
@@ -159,7 +168,6 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 				this.weapon_position = 2;
 				this.death_time = game.time.now + 3000;
 				this.setAnimation("stay2");
-				this.body.sprite.tint = 0xFF0000;
 				this.body.sprite.visible = false;
 			}
 		},
@@ -186,10 +194,12 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 		attackThrow: function()
 		{
 			if(!this.is_dead) {
-				if(this.weapon != null)
+				if(this.weapon != null && this.weapon_position == -1)
 				{
 					this.weapon.is_used = false;
 					this.weapon.fly(this.dirrection);
+					this.weapon = null;
+					this.weapon_position = 2;
 				}
 			}
 		},
@@ -208,6 +218,16 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 		//Move secondary sprites to main sprite ( main sprites it is body С: )
 		updateBodyPartsPosition: function()
 		{	
+
+			//start debug
+			this.line_debug.setTo(this.body.sprite.body.position.x,
+				this.body.sprite.body.position.y,
+				this.body.sprite.body.position.x +
+				this.body.sprite.body.width,
+				this.body.sprite.body.position.y +
+				this.body.sprite.body.height);
+			//end debug
+
 			if(!this.is_dead) {
 				if(this.body.sprite.body.velocity.x == 0)
 					this.setAnimation("stay"+ this.weapon_position);
@@ -218,10 +238,28 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 						{
 							this.weapon.position.x =
 							 	this.body.sprite.position.x+10*this.dirrection;
-							this.weapon.position.y =
-								this.body.sprite.position.y+22*(this.weapon_position-1);
-							this.weapon.rotation = 0;
-							this.weapon.body.rotation = 0;
+								 if(this.weapon_position != -1)
+								 {
+									this.weapon.position.y =
+										this.body.sprite.position.y+
+										22*(this.weapon_position-1);
+									this.weapon.rotation = 0;
+									//!!!!!!!!!!!!!!!!!!
+									//здесь обычное тело
+									//!!!!!!!!!!!!!!!!!!
+								 }
+								 else
+								if(this.weapon_position == -1)
+								 {
+									 this.weapon.position.y =
+										this.body.sprite.position.y+
+										22*(this.weapon_position);
+									this.weapon.rotation = -1.8*this.dirrection;
+									//!!!!!!!!!!!!!!!
+									//вытянутое вверх
+									//!!!!!!!!!!!!!!!
+								 }
+
 							this.weapon.alpha = 1;
 						}
 						else
@@ -255,31 +293,25 @@ function createPlayer(game, position, color, texture_names, gravity, bounce, di)
 			}
 		},
 
-		unsignedMod: function uMod(number, Limit)
-		{
- 			  if(number > 0) return number%Limit; 
-              if(number < 0) return Limit + number%Limit; 
-              
-              return 0; 
-		},
-
 		weaponPositionUpdate: function (change)
 		{
 			if (1 == Math.abs(change)) {
 				if ( game.time.now > this.weapon_time ) {
-					if(change == -1 && this.weapon_position > 0)
-						this.weapon_position = 
-							this.unsignedMod(this.weapon_position + change, 3);
+					if ( change == -1 && this.weapon_position > -1)
+						this.weapon_position += change;
 					else
-						if(change == 1 && this.weapon_position < 2)
-							this.weapon_position = 
-							this.unsignedMod(this.weapon_position + change, 3);
+					if ( change == 1 && this.weapon_position < 2)
+						this.weapon_position += change;
 					this.weapon_time = game.time.now + 300;
 				}
 			}                           
 			console.log(this.weapon_position);
 		}
 	};
+
+	// Ultra animation
+
+	main_player.body.animation["stay-1"] = tminus1;
 
 	// Enable physics for sprites
 	main_player.initPhysics(main_player.body.sprite, bounce, gravity);
