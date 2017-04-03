@@ -27,7 +27,7 @@ class GameManager
         this.platforms = game.add.group();
 	    this.platforms.enableBody = true;
 	    let ground = this.platforms.create(-1000, game.height-20, "a");
-	    ground.scale.setTo(100, 1);
+	    ground.scale.setTo(400, 1);
         ground.body.immovable = true;
 
 
@@ -133,6 +133,12 @@ class GameManager
            else
             this.camera.move(1, 0);
        }
+      /*
+       if (this.camera.position.x > this.player[0].body.sprite.position.x + 600)
+            this.player[0].die();
+       if (this.camera.position.x > this.player[1].body.sprite.position.x - 600)
+            this.player[1].die();
+        */
     }
     spawnWeapon(position, dir)
     {
