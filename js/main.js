@@ -92,7 +92,7 @@ function create()
 {
 	game.physics.startSystem(Phaser.Physics.ARCADE);
 	game.stage.backgroundColor = "#000";
-	game.world.setBounds(0, 0, 1200, 600);
+	game.world.setBounds(0, 0, 5000, 600);
 
 	gm = new GameManager(game);
 	gm.cameraInit(game);

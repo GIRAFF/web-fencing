@@ -45,11 +45,11 @@ class Player
 
 	initPhysics(gravity, bounce)
 	{
-	game.physics.arcade.enable(this.body.sprite);
-	this.body.sprite.body.bounce.y = bounce;
-	this.body.sprite.body.gravity.y = gravity;
-	this.body.sprite.body.setSize(30, 100, 35, 61);
-	this.body.sprite.anchor.setTo(0.5, 0.5);
+		game.physics.arcade.enable(this.body.sprite);
+		this.body.sprite.body.bounce.y = bounce;
+		this.body.sprite.body.gravity.y = gravity;
+		this.body.sprite.body.setSize(30, 100, 35, 61);
+		this.body.sprite.anchor.setTo(0.5, 0.5);
 	}
 
 	jump()
@@ -70,7 +70,7 @@ class Player
 		this.body.sprite.body.velocity.x = -this.velocities.horizontal_velocity;
 		if (this.weapon === null)	
 			this.setAnimation("run_no_weapon");
-			else 
+		else 
 			this.setAnimation("run_with_weapon");
 		}
 	}
@@ -82,7 +82,7 @@ class Player
 		this.body.sprite.body.velocity.x = this.velocities.horizontal_velocity;
 		if (this.weapon === null)	
 			this.setAnimation("run_no_weapon");
-			else 
+		else 
 			this.setAnimation("run_with_weapon");
 		}
 	}
@@ -117,12 +117,12 @@ class Player
 
 	spawn(position, dir)
 	{
-	this.body.sprite.visible = true;
-	this.body.sprite.position.x = position.x;
-	this.body.sprite.position.y = position.y;
-	this.body.sprite.body.enable = true;
-	this.dirrection = dir;
-	this.flags.is_dead = false;
+		this.body.sprite.visible = true;
+		this.body.sprite.position.x = position.x;
+		this.body.sprite.position.y = position.y;
+		this.body.sprite.body.enable = true;
+		this.dirrection = dir;
+		this.flags.is_dead = false;	
 	}
 
 	attackSimple()

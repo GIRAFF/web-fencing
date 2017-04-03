@@ -30,6 +30,7 @@ class Weapon
         this.line_debug = new Phaser.Line(0,0,1,0);
         this.dirrection = 1;
         this.initPhysics(gravity, bounce);
+        this.lenght_rapire = 50;
     }
 
 	debug()
@@ -44,9 +45,9 @@ class Weapon
 
     initPhysics(gravity, bounce)
 	{
-	this.sprite.body.bounce.y = bounce;
-	this.sprite.body.gravity.y = gravity;
-	this.sprite.body.setSize(81, 9);
+        this.sprite.body.bounce.y = bounce;
+        this.sprite.body.gravity.y = gravity;
+        this.sprite.body.setSize(81, 9);
 	}
 
     getWeapon()
@@ -62,8 +63,7 @@ class Weapon
     }
 
     dropWeapon()
-    {
-        
+    {        
         this.immovable = false;
         this.flags.on_ground = false;
         this.flags.is_used = false;
@@ -78,7 +78,8 @@ class Weapon
     update()
     {
         this.debug();
-        this.temp = this.sprite.position.x;
+        if (this.sprite.body.width != 81 && game.time.now > this.times.attack)
+        this.sprite.body.width -= this.lenght_rapire;
 
             if (this.flags.is_fly) {
                 if(!(this.sprite.body.touching.none && this.flags.is_fly))
@@ -88,15 +89,15 @@ class Weapon
 
     attackSimple()
     {
-	    if ( game.time.now > this.times.attack) {
-            this.sprite.position.x += 30;
-            this.times.attack += 300;
-        }
+        this.times.attack = game.time.now + 200;
+	    if ( game.time.now < this.times.attack)
+            this.sprite.body.width += this.lenght_rapire;
         else
             this.temp = this.sprite.position.x;
     }
 
-    setPositionY( change, playerY ) {
+    setPositionY( change, playerY ) 
+    {
         this.sprite.position.y = playerY + this.positions[change];
     }
 

@@ -104,23 +104,34 @@ class GameManager
         this.camera.height = game.world.height;
         this.camera.anchor.setTo(0.5,0);
         game.camera.follow(this.camera);
+        this.camera.move = function(d, s)   
+        {
+            this.body.velocity.x = d * s;
+        };
     }
 
     cameraUpdate(game)
     {
-       // НЕ РАБОТАЕТ ! ИНТЕРСЕКТС ЛОВИТ ТОЛЬКО СЛЕВА НА ПРАВО
-       // Здесь двигаем камеру
-       // Если какой то игрок задел камеру, смещаем её в направлении игрока
-       for (var i = 0; i < this.player.length; i++) {
-           //this.camera.scale.setTo(this.player[i].dirrection);
-           let a = game.physics.arcade.intersects(this.player[i].body.sprite,
-                    this.camera); 
-            if (a) {
-                console.log("PX =" + this.player[i].body.sprite.position.x +
-                    "CX = " + this.camera.x);
-                this.camera.x = this.player[i].body.sprite.position.x +
-                     10*this.player[i].dirrection;
-            }
+       if (!this.player[0].flags.is_dead && !this.player[1].flags.is_dead){
+            this.camera.position.x = (this.player[0].body.sprite.position.x +
+                                 this.player[1].body.sprite.position.x)/2;
+            return;
+       }
+
+       if (this.player[0].flags.is_dead
+       && this.player[1].body.sprite.position.x - 150 > this.camera.position.x){
+           if(this.player[1].body.sprite.body.velocity.x > 0)
+            this.camera.move(-1, this.player[1].velocities.horizontal_velocity);
+           else
+            this.camera.move(-1, 0);
+       }
+
+       if (this.player[1].flags.is_dead
+       && this.player[0].body.sprite.position.x + 150 > this.camera.position.x){
+           if(this.player[0].body.sprite.body.velocity.x > 0)
+            this.camera.move(1, this.player[0].velocities.horizontal_velocity);
+           else
+            this.camera.move(1, 0);
        }
     }
     spawnWeapon(position, dir)
@@ -168,8 +179,11 @@ class GameManager
             }	
             
         // Атака
+        if (control.attack_simple.isDown)       //Неработающая атака
+            this.player[index].attackSimple();
         if (control.throw_weapon.isDown) 
-            if (this.player[index].weapon != null) 	this.player[index].attackThrow();
+            if (this.player[index].weapon != null)
+             	this.player[index].attackThrow();
         // Поднятие/Опускание шпаги
         if (control.up.isDown)
                 this.player[index].upDownArm(-1);
@@ -252,9 +266,9 @@ class GameManager
         }
 
         if (this.player[0].flags.is_dead && game.time.now > this.player[0].times.death)
-				this.player[0].spawn(this.player[0].body.sprite.position, 1);
+				this.player[0].spawn( {x: this.camera.position.x - game.width/2 + 200, y: 200}, 1);
         if (this.player[1].flags.is_dead && game.time.now > this.player[1].times.death)
-				this.player[1].spawn(this.player[1].body.sprite.position, -1);
+				this.player[1].spawn( {x: this.camera.position.x + game.width / 2 - 200, y: 200}, -1);
     }
 
     collidePlayerPlatforms( game )
