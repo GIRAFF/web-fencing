@@ -254,7 +254,7 @@ class GameManager
                 if (game.physics.arcade.collide(this.player[0].body.sprite,
                     this.weapon_list[i].sprite)) {
                         this.player[0].die();
-                        this.weapon_list[i].dropWeapon();
+                        this.weapon_list[i].dropWeapon();                      
                 }
 
                 if (game.physics.arcade.collide(this.player[1].body.sprite,
@@ -264,6 +264,21 @@ class GameManager
                 }
             }
         }
+        //perepih shpag    
+        for (var i = 0; i < this.weapon_list.length; i++)
+            if (this.weapon_list[i].flags.is_fly)
+                for (var j = 0; j < this.weapon_list.length; j++)
+                    if (this.weapon_list[i].flags.is_fly && i != j)
+                        if (game.physics.arcade.collide(this.weapon_list[i].sprite,
+                            this.weapon_list[j].sprite)) {
+                                if(!this.weapon_list[i].flags.is_used)
+                                    this.weapon_list[i].dropWeapon();
+                                if(!this.weapon_list[j].flags.is_used)
+                                    this.weapon_list[j].dropWeapon();
+                }
+
+        
+        
 
         if (this.player[0].flags.is_dead && game.time.now > this.player[0].times.death)
 				this.player[0].spawn( {x: this.camera.position.x - game.width/2 + 200, y: 200}, 1);
@@ -271,7 +286,7 @@ class GameManager
 				this.player[1].spawn( {x: this.camera.position.x + game.width / 2 - 200, y: 200}, -1);
     }
 
-    collidePlayerPlatforms( game )
+    collidePlayerPlatforms(game)
     {
         for (var i = 0; i < this.player.length; i++) {
             this.player[i].flags.on_ground = game.physics.arcade.collide(
@@ -281,7 +296,6 @@ class GameManager
 
     collideWeaponsPlatform( game )
     {
-
      for (var i = 0; i < this.weapon_list.length; i++) {
             this.weapon_list[i].flags.on_ground = game.physics.arcade.collide(
                 this.weapon_list[i].sprite, this.platforms);

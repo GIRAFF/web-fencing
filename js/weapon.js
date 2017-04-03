@@ -53,7 +53,7 @@ class Weapon
     getWeapon()
     {
         if(this.flags.on_ground) {
-            this.sprite.body.enable = true;
+            //this.sprite.body.enable = true;
             this.sprite.body.immovable = true;
             this.sprite.body.gravity.y = 0;
             this.flags.is_used = true;
@@ -64,14 +64,15 @@ class Weapon
 
     dropWeapon()
     {        
-        this.immovable = false;
+        this.sprite.body.immovable = false;
         this.flags.on_ground = false;
         this.flags.is_used = false;
         this.flags.is_fly = false;
         this.sprite.body.velocity.x = 0;
         this.sprite.body.gravity.y = this._gravity;
         this.sprite.alpha = 1;
-        this.sprite.body.enable = true;
+        this.sprite.body.height = 9;
+        //this.sprite.body.enable = true;
         return null;
     }
 
@@ -79,7 +80,7 @@ class Weapon
     {
         this.debug();
         if (this.sprite.body.width != 81 && game.time.now > this.times.attack)
-        this.sprite.body.width -= this.lenght_rapire;
+            this.sprite.body.width -= this.lenght_rapire;
 
             if (this.flags.is_fly) {
                 if(!(this.sprite.body.touching.none && this.flags.is_fly))
@@ -104,8 +105,11 @@ class Weapon
     fly(dir)
     {
         this.dropWeapon();
+        this.sprite.body.immovable = false;
         this.flags.is_fly = true;
         this.sprite.body.gravity.y = 0;
+        this.sprite.body.height = 81;
+        this.sprite.body.position.y -= 40;
         this.sprite.body.velocity.x = this.velocities.fly_velocity*dir;
         return null;
     }
