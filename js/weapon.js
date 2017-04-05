@@ -3,7 +3,9 @@ class Weapon
     constructor ( game_group, texture_name, gravity, bounce, position)
     {
         this.sprite = game_group.create(position.x, position.y, texture_name);
-       
+		
+		this.animation = null;
+		
         this.positions = { };
         this.positions["p-1"] = -20;
         this.positions["p0"] = 10;
@@ -14,7 +16,7 @@ class Weapon
             on_ground: false,
             is_used: false,
             is_fly: false,
-              };
+        };
 
         this.velocities = {
             fly_velocity: 500,
@@ -24,6 +26,15 @@ class Weapon
         this.times = {
             attack: 0
         };
+		
+		this.animation_velocity = 12;
+		this.animation =  {
+			stay:  this.sprite.animations.add("stay",
+						[0], 0, true),
+			fly: this.sprite.animations.add("fly",
+						[1,2,3,4,5,6,7,8], this.animation_velocity, true),
+			
+		};
 
         this.temp = 0;
         this._gravity = gravity;
@@ -64,6 +75,7 @@ class Weapon
 
     dropWeapon()
     {        
+		this.animation["stay"].play("stay");
         this.sprite.body.immovable = false;
         this.flags.on_ground = false;
         this.flags.is_used = false;
@@ -104,7 +116,8 @@ class Weapon
 
     fly(dir)
     {
-        this.dropWeapon();
+        this.dropWeapon();		
+		this.animation["fly"].play("fly");
         this.sprite.body.immovable = false;
         this.flags.is_fly = true;
         this.sprite.body.gravity.y = 0;
