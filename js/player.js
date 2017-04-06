@@ -144,12 +144,12 @@ class Player
 
 	stay()
 	{
-	this.setAnimation("stay" + this.weapon_position);
+		this.setAnimation("stay" + this.weapon_position);
 	}
 
 	doReflection()
 	{
-	this.body.sprite.scale.setTo(this.dirrection, 1);
+		this.body.sprite.scale.setTo(this.dirrection, 1);
 	}
 
 	setAnimation( animation_name )
