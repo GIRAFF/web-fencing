@@ -31,6 +31,7 @@ class Player
 				[10, 11, 12, 13, 14, 15, 16, 17], this.animation_velocity, true)
 		};
 
+
 	this.body.animation["stay-1"] = this.body.sprite.animations.add("stay0", 
 		[20,21], this.animation_velocity/5, true),
 
@@ -143,12 +144,12 @@ class Player
 
 	stay()
 	{
-	this.setAnimation("stay" + this.weapon_position);
+		this.setAnimation("stay" + this.weapon_position);
 	}
 
 	doReflection()
 	{
-	this.body.sprite.scale.setTo(this.dirrection, 1);
+		this.body.sprite.scale.setTo(this.dirrection, 1);
 	}
 
 	setAnimation( animation_name )

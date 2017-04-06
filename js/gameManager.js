@@ -143,7 +143,8 @@ class GameManager
     spawnWeapon(position, dir)
     {
         this.weapon_list.push( 
-            new Weapon(this.weapon_group, "weaponTexture", 
+            //new Weapon(this.weapon_group, "weaponTexture",
+			new Weapon(this.weapon_group, "weaponTextureRotate",
             this.gravity, this.bounce, position));
 
        this.weapon_group.add(this.weapon_list[this.weapon_list.length-1].sprite);

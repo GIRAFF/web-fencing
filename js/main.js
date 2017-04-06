@@ -71,6 +71,8 @@ function preload()
 	// load weapon texture
 	game.load.spritesheet("weaponTexture",
 		"assets/rapire.png", 81, 9, 1, 0, 0); // sword
+	game.load.spritesheet("weaponTextureRotate",
+		"assets/rapire_rotate.png", 81, 81, 8, 0, 0); // sword_rotate
 	// load player texture
 	/*game.load.spritesheet("player1",
 		"assets/AnimationRun_v1_1.png", 98, 107, 10, 6, 6);//player
