@@ -20,7 +20,7 @@ class Weapon
         };
 
         this.velocities = {
-            fly_velocity: 500,
+            fly_velocity: 800,
             horizontal_velocity: 9000
         };
     
@@ -28,7 +28,7 @@ class Weapon
             attack: 0
         };
 		
-		this.animation_velocity = 12;
+		this.animation_velocity = 30;
 		this.animation =  {
 			stay:  this.sprite.animations.add("stay",
 						[0], 0, true),
@@ -101,6 +101,7 @@ class Weapon
              if (this.flags.is_fly) {
                 if(!(this.sprite.body.touching.none && this.flags.is_fly))
                     this.dropWeapon();
+                   // this.sprite.body.velocity.y = -this._gravity*2;
             }
     }
 
