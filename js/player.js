@@ -69,7 +69,7 @@ class Player
 	if (!this.flags.is_dead) {
 		this.dirrection = -1;
 		this.body.sprite.body.velocity.x = -this.velocities.horizontal_velocity;
-		if (this.weapon === null)	
+		if (this.weapon == null)	
 			this.setAnimation("run_no_weapon");
 		else 
 			this.setAnimation("run_with_weapon");
@@ -81,7 +81,7 @@ class Player
 	if (!this.flags.is_dead) {
 		this.dirrection = 1;
 		this.body.sprite.body.velocity.x = this.velocities.horizontal_velocity;
-		if (this.weapon === null)	
+		if (this.weapon == null)	
 			this.setAnimation("run_no_weapon");
 		else 
 			this.setAnimation("run_with_weapon");
