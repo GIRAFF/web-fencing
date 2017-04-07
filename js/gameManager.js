@@ -208,25 +208,29 @@ class GameManager
 			if (control.down.isDown)
 				this.player[index].upDownArm(1);
 
-		this.player[index].update();	
-		//Обновляем положение шпаги
-		if (this.player[index].weapon != null) {
-			//Если стоит
-			if (this.player[index].body.sprite.body.velocity.x == 0) {
+        this.player[index].update();	
+        //Обновляем положение шпаги
+        if (this.player[index].weapon != null) {
+            //Если стоит
+            if (this.player[index].body.sprite.body.velocity.x == 0) {
+                this.player[index].weapon.sprite.position.x =
+                    this.player[index].body.sprite.position.x+
+                        10*this.player[index].dirrection;
+                this.player[index].weapon.sprite.alpha = 1;
+                this.player[index].weapon.sprite.body.enable = true;
+            }
+            else {
+            // Если бежит
+                this.player[index].weapon.sprite.alpha = 0;
 				this.player[index].weapon.sprite.position.x =
-					this.player[index].body.sprite.position.x+
-					10*this.player[index].dirrection;
-				this.player[index].weapon.sprite.alpha = 1;
-				this.player[index].weapon.sprite.body.enable = true;
-			}
-			else {
-				// Если бежит
-				this.player[index].weapon.sprite.alpha = 0;
-				this.player[index].weapon.sprite.body.enable = false;
-			}
-			this.player[index].weapon.doReflection(this.player[index].dirrection);
-		}
-	}
+                this.player[index].body.sprite.position.x-
+                        20*this.player[index].dirrection;
+				this.player[index].weapon.sprite.position.y =
+                this.player[index].body.sprite.position.y-20;
+            }
+            this.player[index].weapon.doReflection(this.player[index].dirrection);
+        }
+    }
 
 	weaponsUpdate( game )
 	{
@@ -267,38 +271,26 @@ class GameManager
 		//Убийства летящими шпагами
 		for (var i = 0; i < this.weapon_list.length; i++) {
 			if (this.weapon_list[i].flags.is_fly) {
-
-				if (game.physics.arcade.collide(this.player[0].body.sprite,
-					this.weapon_list[i].sprite)) {
-					this.player[0].die();
-					this.weapon_list[i].dropWeapon();                      
-				}
-
-				if (game.physics.arcade.collide(this.player[1].body.sprite,
-					this.weapon_list[i].sprite)) {
-					this.player[1].die();
-					this.weapon_list[i].dropWeapon();
-				}
-			}
-		}
-		//perepih shpag    
-		for (var i = 0; i < this.weapon_list.length; i++)
-			if (this.weapon_list[i].flags.is_fly)
-				for (var j = 0; j < this.weapon_list.length; j++)
-					if (this.weapon_list[i].flags.is_fly && i != j)
-						if (game.physics.arcade.collide(this.weapon_list[i].sprite,
-							this.weapon_list[j].sprite)) {
-							if(!this.weapon_list[i].flags.is_used)
-							this.weapon_list[i].dropWeapon();
-							if(!this.weapon_list[j].flags.is_used)
-							this.weapon_list[j].dropWeapon();
-						}
-
-        // обновление атаки для шпаги
-        if(this.player[0].weapon != null)
-            this.player[0].weapon.attackDirectionUpdate(this.player[0].dirrection);
-        if(this.player[1].weapon != null)
-            this.player[1].weapon.attackDirectionUpdate(this.player[1].dirrection);
+                if (game.physics.arcade.collide(this.player[1].body.sprite,
+                    this.weapon_list[i].sprite)) {
+                        this.player[1].die();
+                        this.weapon_list[i].dropWeapon();
+                }
+            }
+        }
+        //perepih shpag    
+        for (var i = 0; i < this.weapon_list.length; i++)
+            if (this.weapon_list[i].flags.is_fly)
+                for (var j = 0; j < this.weapon_list.length; j++)
+                    if (this.weapon_list[i].flags.is_fly && i != j)
+                        if (game.physics.arcade.collide(this.weapon_list[i].sprite,
+                            this.weapon_list[j].sprite)) {
+                                if(!this.weapon_list[i].flags.is_used)
+                                    this.weapon_list[i].dropWeapon();
+                                if(!this.weapon_list[j].flags.is_used)
+                                    this.weapon_list[j].dropWeapon();
+                }
+      
 
         if (this.player[0].flags.is_dead && game.time.now > this.player[0].times.death)
 				this.player[0].spawn( {x: this.camera.position.x - game.width/2 + 200, y: 200}, 1);
