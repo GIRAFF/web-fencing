@@ -203,9 +203,9 @@ class GameManager
         if (this.player[index].weapon != null) {
             //Если стоит
             if (this.player[index].body.sprite.body.velocity.x == 0) {
-                this.player[index].weapon.sprite.position.x =
-                    this.player[index].body.sprite.position.x+
-                        10*this.player[index].dirrection;
+                    this.player[index].weapon.sprite.position.x =
+                        this.player[index].body.sprite.position.x+
+                            10*this.player[index].dirrection;
                 this.player[index].weapon.sprite.alpha = 1;
                 this.player[index].weapon.sprite.body.enable = true;
             }
@@ -246,13 +246,19 @@ class GameManager
         if (this.player[0].weapon != null && !this.player[1].flags.is_dead) {
             let c = game.physics.arcade.collide(
 				this.player[1].body.sprite, this.player[0].weapon.sprite);
-			if (c) this.player[1].die();
+			if (c) { 
+                this.player[1].die();
+              ///  this.player[1].weapon = this.player[1].weapon.dropWeapon();
+            }
         }
         // Убийство шпагой в руках
         if (this.player[1].weapon != null && !this.player[0].flags.is_dead) {
             let c = game.physics.arcade.collide(
 				this.player[0].body.sprite, this.player[1].weapon.sprite);
-			if (c) this.player[0].die();
+			if (c) { 
+                this.player[0].die();
+               // this.player[0].weapon = this.player[0].weapon.dropWeapon();
+            }
         }
         //Убийства летящими шпагами
         for (var i = 0; i < this.weapon_list.length; i++) {
@@ -284,13 +290,18 @@ class GameManager
                                     this.weapon_list[j].dropWeapon();
                 }
 
-        
-        
+        // обновление атаки для шпаги
+        if(this.player[0].weapon != null)
+            this.player[0].weapon.attackDirectionUpdate(this.player[0].dirrection);
+        if(this.player[1].weapon != null)
+            this.player[1].weapon.attackDirectionUpdate(this.player[1].dirrection);
 
         if (this.player[0].flags.is_dead && game.time.now > this.player[0].times.death)
 				this.player[0].spawn( {x: this.camera.position.x - game.width/2 + 200, y: 200}, 1);
         if (this.player[1].flags.is_dead && game.time.now > this.player[1].times.death)
 				this.player[1].spawn( {x: this.camera.position.x + game.width / 2 - 200, y: 200}, -1);
+
+        
     }
 
     collidePlayerPlatforms(game)
