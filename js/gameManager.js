@@ -212,7 +212,11 @@ class GameManager
             else {
             // Если бежит
                 this.player[index].weapon.sprite.alpha = 0;
-                this.player[index].weapon.sprite.body.enable = false;
+				this.player[index].weapon.sprite.position.x =
+                this.player[index].body.sprite.position.x-
+                        20*this.player[index].dirrection;
+				this.player[index].weapon.sprite.position.y =
+                this.player[index].body.sprite.position.y-20;
             }
             this.player[index].weapon.doReflection(this.player[index].dirrection);
         }
@@ -283,9 +287,7 @@ class GameManager
                                 if(!this.weapon_list[j].flags.is_used)
                                     this.weapon_list[j].dropWeapon();
                 }
-
-        
-        
+      
 
         if (this.player[0].flags.is_dead && game.time.now > this.player[0].times.death)
 				this.player[0].spawn( {x: this.camera.position.x - game.width/2 + 200, y: 200}, 1);
