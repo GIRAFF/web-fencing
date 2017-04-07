@@ -162,13 +162,33 @@ class GameManager
 
 	controlInput(game, index, control)
 	{
-
+	
 		// Контроль передвижения
 		if (!(control.right.isDown &&
 			control.left.isDown &&
 			control.up.isDown &&
 			control.down.isDown )) {
 			this.player[index].body.sprite.body.velocity.x = 0;
+		}
+
+		// Приседание с задержкой
+		if (control.down.isDown) {
+			this.player[index].is_seat = true;
+		} else if (control.down.isUp) {
+			this.player[index].is_seat = false;
+			this.player[index].stay();
+		}
+		if (this.player[index].is_seat) {
+			this.player[index].times.down_time +=4;
+		} else {
+			this.player[index].times.down_time = 0;
+		}
+		if (this.player[index].times.down_time > 70 &&
+			this.player[index].body.sprite.body.velocity.x == 0
+			&& !this.player[index].flags.is_seat) {
+			this.player[index].body.sprite.position.y -= 50;
+			this.player[index].seat();
+			this.player[index].times.down_time = 0;
 		}
 
 		if (control.jump.isDown) this.player[index].jump(); 
@@ -276,9 +296,14 @@ class GameManager
                         this.player[1].die();
                         this.weapon_list[i].dropWeapon();
                 }
+				 if (game.physics.arcade.collide(this.player[0].body.sprite,
+                    this.weapon_list[i].sprite)) {
+                        this.player[0].die();
+                        this.weapon_list[i].dropWeapon();
+                }
             }
         }
-        //perepih shpag    
+        // Столкновения летящих шпаг  
         for (var i = 0; i < this.weapon_list.length; i++)
             if (this.weapon_list[i].flags.is_fly)
                 for (var j = 0; j < this.weapon_list.length; j++)
@@ -290,7 +315,6 @@ class GameManager
                                 if(!this.weapon_list[j].flags.is_used)
                                     this.weapon_list[j].dropWeapon();
                 }
-      
 
         if (this.player[0].flags.is_dead && game.time.now > this.player[0].times.death)
 				this.player[0].spawn( {x: this.camera.position.x - game.width/2 + 200, y: 200}, 1);

@@ -8,9 +8,10 @@ class Player
 	{
 	
 	this.velocities = {	jump: -500, horizontal_velocity: 500 };
-	this.times = { move: 0, jump: 0, death: 0, weapon: 0};
-	this.flags = { on_ground: false, is_dead: false	};
+	this.times = { move: 0, jump: 0, death: 0, weapon: 0, down_time: 0};
+	this.flags = { on_ground: false, is_dead: false, is_seat: false	};
 	this.body = { animation: null, sprite: null	};
+	this.sizes = { stay: 100};
 
 		// Init phaser sprite
 	this.body.sprite = game.add.sprite(position.x, position.y, texture_name);
@@ -49,7 +50,7 @@ class Player
 		game.physics.arcade.enable(this.body.sprite);
 		this.body.sprite.body.bounce.y = bounce;
 		this.body.sprite.body.gravity.y = gravity;
-		this.body.sprite.body.setSize(30, 100, 35, 61);
+		this.body.sprite.body.setSize(30, this.sizes.stay, 35, 61);
 		this.body.sprite.anchor.setTo(0.5, 0.5);
 	}
 
@@ -60,6 +61,19 @@ class Player
 				this.body.sprite.body.velocity.y = this.velocities.jump;
 				this.times.jump = game.time.now + 1000;
 				//this.setAnimation("jump");
+			}
+		}
+	}
+
+	seat()
+	{
+		if (!this.flags.is_dead) {
+			if (!this.flags.is_seat) {
+				this.body.sprite.body.height = 2*this.sizes.stay/3;
+				this.body.sprite.position.y += 2*this.sizes.stay/3 - 10;
+				this.flags.down_time = 0;
+				this.flags.is_seat = true;
+			//this.setAnimation("seat")
 			}
 		}
 	}
@@ -144,7 +158,12 @@ class Player
 
 	stay()
 	{
-		this.setAnimation("stay" + this.weapon_position);
+		if (this.flags.is_seat) {
+			this.body.sprite.body.height = this.sizes.stay;
+			this.body.sprite.position.y -= 2*this.sizes.stay/3 - 20;
+			this.flags.is_seat = false;
+			this.setAnimation("stay" + this.weapon_position);
+		}
 	}
 
 	doReflection()
