@@ -31,7 +31,9 @@ class GameManager
 		let ground = this.platforms.create(-1000, game.height-20, "a");
 		ground.scale.setTo(400, 1);
 		ground.body.immovable = true;
-
+		let platform1 = this.platforms.create(-100, game.height-160, "a");
+		platform1.scale.setTo(10, 1);
+		platform1.body.immovable = true;
 
 		this.input = {
 			cursors: null,
