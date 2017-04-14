@@ -64,3 +64,12 @@
 	color: #ff0;
 	margin: 4rem 0;
 }
+
+#pause header {
+	font-family: UnifrakurCook, bold;
+	font-size: 3.4rem;
+	text-shadow: 0.2rem 0.2rem #333;
+	color: #ff0;
+	margin: 10rem 0;
+	text-align: center;
+}

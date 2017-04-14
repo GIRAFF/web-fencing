@@ -5,8 +5,6 @@ class GameManager
 		this.is_debug = true;
 		this.game_state = {
 			MENU: 0,
-			CONFIG: 1,
-			PAUSE: 2,
 			GAME: 3
 		};
 		this.styles = 
@@ -48,28 +46,14 @@ class GameManager
 		this.input.esc = game.input.keyboard.addKey(Phaser.Keyboard.ESC);
 		this.input.esc.onDown.add(() =>
 			{
-				var me = this;
-				// TODO fade
-				switch (me.curr_state) {
-					case me.game_state.GAME:
-						me.curr_state = me.game_state.PAUSE;
-						me.pause_label = game.add.text(
-							//game.world.centerX - 200,
-							//game.world.centerY,
-							400,
-							200,
-							"Press ESC to contunue",
-							styles[0]
-						);
-						me.pause_label.fixedToCamera = true;
-						//me.pause_label.anchor.setTo(0.5, 0.5);
-						game.paused = true;
-						break;
-					case me.game_state.PAUSE:
-						me.curr_state = me.game_state.GAME;
-						me.pause_label.destroy();
-						game.paused = false;
-						break;
+				var me = this,
+					layout = document.getElementById("pause");
+				if (game.paused) {
+					game.paused = false;
+					layout.classList.add("hidden");
+				} else {
+					game.paused = true;
+					layout.classList.remove("hidden");
 				}
 			});
 		let _input = this.input;
