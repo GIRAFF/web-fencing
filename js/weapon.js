@@ -3,7 +3,9 @@ class Weapon
     constructor ( game_group, texture_name, gravity, bounce, position)
     {
         this.sprite = game_group.create(position.x, position.y, texture_name);
-       
+		
+		this.animation = null;
+		
         this.positions = { };
         this.positions["p-1"] = -20;
         this.positions["p0"] = 10;
@@ -14,16 +16,26 @@ class Weapon
             on_ground: false,
             is_used: false,
             is_fly: false,
-              };
+            is_attack: false
+        };
 
         this.velocities = {
-            fly_velocity: 500,
+            fly_velocity: 800,
             horizontal_velocity: 9000
         };
     
         this.times = {
             attack: 0
         };
+		
+		this.animation_velocity = 30;
+		this.animation =  {
+			stay:  this.sprite.animations.add("stay",
+						[0], 0, true),
+			fly: this.sprite.animations.add("fly",
+						[1,2,3,4,5,6,7,8], this.animation_velocity, true),
+			
+		};
 
         this.temp = 0;
         this._gravity = gravity;
@@ -31,6 +43,7 @@ class Weapon
         this.dirrection = 1;
         this.initPhysics(gravity, bounce);
         this.lenght_rapire = 50;
+        this.offset_rapire = 0;
     }
 
 	debug()
@@ -53,7 +66,6 @@ class Weapon
     getWeapon()
     {
         if(this.flags.on_ground) {
-            //this.sprite.body.enable = true;
             this.sprite.body.immovable = true;
             this.sprite.body.gravity.y = 0;
             this.flags.is_used = true;
@@ -64,6 +76,7 @@ class Weapon
 
     dropWeapon()
     {        
+		this.animation["stay"].play("stay");
         this.sprite.body.immovable = false;
         this.flags.on_ground = false;
         this.flags.is_used = false;
@@ -72,29 +85,35 @@ class Weapon
         this.sprite.body.gravity.y = this._gravity;
         this.sprite.alpha = 1;
         this.sprite.body.height = 9;
-        //this.sprite.body.enable = true;
         return null;
+    }
+
+    attackDirectionUpdate(dirrection_player)
+    {
+         if(this.flags.is_attack) {
+            this.sprite.body.velocity.x = 500*dirrection_player;
+            }
     }
 
     update()
     {
         this.debug();
-        if (this.sprite.body.width != 81 && game.time.now > this.times.attack)
-            this.sprite.body.width -= this.lenght_rapire;
-
-            if (this.flags.is_fly) {
+             if (this.flags.is_fly) {
                 if(!(this.sprite.body.touching.none && this.flags.is_fly))
                     this.dropWeapon();
+                   // this.sprite.body.velocity.y = -this._gravity*2;
             }
     }
 
     attackSimple()
     {
-        this.times.attack = game.time.now + 200;
-	    if ( game.time.now < this.times.attack)
-            this.sprite.body.width += this.lenght_rapire;
-        else
-            this.temp = this.sprite.position.x;
+         this.flags.is_attack = true;
+         this.times.attack = game.time.now + 1000;
+
+        	if ( game.time.now > this.times.attack) {
+                this.flags.is_attack = false;
+            } 
+
     }
 
     setPositionY( change, playerY ) 
@@ -104,7 +123,8 @@ class Weapon
 
     fly(dir)
     {
-        this.dropWeapon();
+        this.dropWeapon();		
+		this.animation["fly"].play("fly");
         this.sprite.body.immovable = false;
         this.flags.is_fly = true;
         this.sprite.body.gravity.y = 0;

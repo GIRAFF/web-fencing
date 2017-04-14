@@ -3,7 +3,7 @@ class GameManager
 	constructor(game)
 	{
 		this.is_debug = true;
-		this.game_states = {
+		this.game_state = {
 			MENU: 0,
 			CONFIG: 1,
 			PAUSE: 2,
@@ -14,13 +14,15 @@ class GameManager
 				{ font: "20px UnifrakturMaguntia", fill: "#fac" },
 				{ font: "100px UnifrakturMaguntia", fill: "#ff3" }
 			];
-		this.game_current_state = this.game_states.GAME;
+		this.curr_state = this.game_state.GAME;
 		this.player = [];
 		this.weapon_list = [];
 		this.weapon_group = game.add.group();
 		this.weapon_group.enableBody = true;
+		// TODO explain
 		this.win_or_lose_dir = 0;
 		this.current_winner_label;
+		this.pause_label;
 		this.gravity = 800;
 		this.camera = null; 
 		this.bounce = 0;
@@ -30,6 +32,9 @@ class GameManager
 		ground.scale.setTo(400, 1);
 		ground.body.immovable = true;
 
+		let platform1 = this.platforms.create(-100, game.height-160, "a");
+		platform1.scale.setTo(10, 1);
+		platform1.body.immovable = true;
 
 		this.input = {
 			cursors: null,
@@ -41,22 +46,28 @@ class GameManager
 
 		this.input.cursors = game.input.keyboard.createCursorKeys();
 		this.input.esc = game.input.keyboard.addKey(Phaser.Keyboard.ESC);
-		this.input.esc.onDown.add(function()
+		this.input.esc.onDown.add(() =>
 			{
+				var me = this;
 				// TODO fade
-				switch (curr_state) {
-					case game_state.GAME:
-						curr_state = game_state.PAUSE;
-						pause_label = game.add.text(game.world.centerX - 200,
-							game.world.centerY,
+				switch (me.curr_state) {
+					case me.game_state.GAME:
+						me.curr_state = me.game_state.PAUSE;
+						me.pause_label = game.add.text(
+							//game.world.centerX - 200,
+							//game.world.centerY,
+							400,
+							200,
 							"Press ESC to contunue",
-							styles[0]);
-						pause_label.anchor.setTo(0.5, 0.5);
+							styles[0]
+						);
+						me.pause_label.fixedToCamera = true;
+						//me.pause_label.anchor.setTo(0.5, 0.5);
 						game.paused = true;
 						break;
-					case game_state.PAUSE:
-						curr_state = game_state.GAME;
-						pause_label.destroy();
+					case me.game_state.PAUSE:
+						me.curr_state = me.game_state.GAME;
+						me.pause_label.destroy();
 						game.paused = false;
 						break;
 				}
@@ -88,11 +99,10 @@ class GameManager
 			jump: game.input.keyboard.addKey(Phaser.Keyboard.Z),
 			attack_simple: game.input.keyboard.addKey(Phaser.Keyboard.X)
 		}
-
-		this.initEvents();
+    this.initEvents();
 	}
-
-	initEvents()
+  
+  initEvents()
 	{
 		// fires when menu item is selected
 		document.addEventListener("menuHit", function(e) {
@@ -154,7 +164,8 @@ class GameManager
 	spawnWeapon(position, dir)
 	{
 		this.weapon_list.push( 
-			new Weapon(this.weapon_group, "weaponTexture", 
+			//new Weapon(this.weapon_group, "weaponTexture",
+			new Weapon(this.weapon_group, "weaponTextureRotate",
 				this.gravity, this.bounce, position));
 
 		this.weapon_group.add(this.weapon_list[this.weapon_list.length-1].sprite);
@@ -163,12 +174,33 @@ class GameManager
 
 	controlInput(game, index, control)
 	{
+	
 		// Контроль передвижения
 		if (!(control.right.isDown &&
 			control.left.isDown &&
 			control.up.isDown &&
 			control.down.isDown )) {
 			this.player[index].body.sprite.body.velocity.x = 0;
+		}
+
+		// Приседание с задержкой
+		if (control.down.isDown) {
+			this.player[index].is_seat = true;
+		} else if (control.down.isUp) {
+			this.player[index].is_seat = false;
+			this.player[index].stay();
+		}
+		if (this.player[index].is_seat) {
+			this.player[index].times.down_time +=4;
+		} else {
+			this.player[index].times.down_time = 0;
+		}
+		if (this.player[index].times.down_time > 70 &&
+			this.player[index].body.sprite.body.velocity.x == 0
+			&& !this.player[index].flags.is_seat) {
+			this.player[index].body.sprite.position.y -= 50;
+			this.player[index].seat();
+			this.player[index].times.down_time = 0;
 		}
 
 		if (control.jump.isDown) this.player[index].jump(); 
@@ -193,7 +225,7 @@ class GameManager
 					else
 						this.weapon_group.children[i].body.enable = c;
 				}	
-
+    
 		// Атака
 		if (control.attack_simple.isDown)       //Неработающая атака
 			this.player[index].attackSimple();
@@ -206,27 +238,30 @@ class GameManager
 		else
 			if (control.down.isDown)
 				this.player[index].upDownArm(1);
-
-		this.player[index].update();	
-		//Обновляем положение шпаги
-		if (this.player[index].weapon != null) {
-			//Если стоит
-			if (this.player[index].body.sprite.body.velocity.x == 0) {
+        this.player[index].update();	
+        //Обновляем положение шпаги
+        if (this.player[index].weapon != null) {
+            //Если стоит
+            if (this.player[index].body.sprite.body.velocity.x == 0) {
+                this.player[index].weapon.sprite.position.x =
+                    this.player[index].body.sprite.position.x+
+                        10*this.player[index].dirrection;
+                this.player[index].weapon.sprite.alpha = 1;
+                this.player[index].weapon.sprite.body.enable = true;
+            }
+            else {
+            // Если бежит
+                this.player[index].weapon.sprite.alpha = 0;
 				this.player[index].weapon.sprite.position.x =
-					this.player[index].body.sprite.position.x+
-					10*this.player[index].dirrection;
-				this.player[index].weapon.sprite.alpha = 1;
-				this.player[index].weapon.sprite.body.enable = true;
-			}
-			else {
-				// Если бежит
-				this.player[index].weapon.sprite.alpha = 0;
-				this.player[index].weapon.sprite.body.enable = false;
-			}
-			this.player[index].weapon.doReflection(this.player[index].dirrection);
-		}
-	}
-
+                this.player[index].body.sprite.position.x-
+                        20*this.player[index].dirrection;
+				this.player[index].weapon.sprite.position.y =
+                this.player[index].body.sprite.position.y-20;
+            }
+            this.player[index].weapon.doReflection(this.player[index].dirrection);
+        }
+    }
+    
 	weaponsUpdate( game )
 	{
 		for (var i = 0; i < this.weapon_list.length; i++) {
@@ -266,35 +301,35 @@ class GameManager
 		//Убийства летящими шпагами
 		for (var i = 0; i < this.weapon_list.length; i++) {
 			if (this.weapon_list[i].flags.is_fly) {
+                if (game.physics.arcade.collide(this.player[1].body.sprite,
+                    this.weapon_list[i].sprite)) {
+                        this.player[1].die();
+                        this.weapon_list[i].dropWeapon();
+                }
+				 if (game.physics.arcade.collide(this.player[0].body.sprite,
+                    this.weapon_list[i].sprite)) {
+                        this.player[0].die();
+                        this.weapon_list[i].dropWeapon();
+                }
+            }
+        }
+        // Столкновения летящих шпаг  
+        for (var i = 0; i < this.weapon_list.length; i++)
+            if (this.weapon_list[i].flags.is_fly)
+                for (var j = 0; j < this.weapon_list.length; j++)
+                    if (this.weapon_list[i].flags.is_fly && i != j)
+                        if (game.physics.arcade.collide(this.weapon_list[i].sprite,
+                            this.weapon_list[j].sprite)) {
+                                if(!this.weapon_list[i].flags.is_used)
+                                    this.weapon_list[i].dropWeapon();
+                                if(!this.weapon_list[j].flags.is_used)
+                                    this.weapon_list[j].dropWeapon();
+                }
 
-				if (game.physics.arcade.collide(this.player[0].body.sprite,
-					this.weapon_list[i].sprite)) {
-					this.player[0].die();
-					this.weapon_list[i].dropWeapon();                      
-				}
-
-				if (game.physics.arcade.collide(this.player[1].body.sprite,
-					this.weapon_list[i].sprite)) {
-					this.player[1].die();
-					this.weapon_list[i].dropWeapon();
-				}
-			}
-		}
-		//perepih shpag    
-		for (var i = 0; i < this.weapon_list.length; i++)
-			if (this.weapon_list[i].flags.is_fly)
-				for (var j = 0; j < this.weapon_list.length; j++)
-					if (this.weapon_list[i].flags.is_fly && i != j)
-						if (game.physics.arcade.collide(this.weapon_list[i].sprite,
-							this.weapon_list[j].sprite)) {
-							if(!this.weapon_list[i].flags.is_used)
-							this.weapon_list[i].dropWeapon();
-							if(!this.weapon_list[j].flags.is_used)
-							this.weapon_list[j].dropWeapon();
-						}
-
-
-
+        if (this.player[0].flags.is_dead && game.time.now > this.player[0].times.death)
+				this.player[0].spawn( {x: this.camera.position.x - game.width/2 + 200, y: 200}, 1);
+        if (this.player[1].flags.is_dead && game.time.now > this.player[1].times.death)
+				this.player[1].spawn( {x: this.camera.position.x + game.width / 2 - 200, y: 200}, -1);
 
 		if (this.player[0].flags.is_dead && game.time.now > this.player[0].times.death)
 			this.player[0].spawn( {x: this.camera.position.x - game.width/2 + 200, y: 200}, 1);
