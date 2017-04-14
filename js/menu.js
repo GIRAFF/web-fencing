@@ -1,18 +1,24 @@
 var menu = {
 	game: function() {
-		gm.dispatchEvent(new CustomEvent("menuHit", {
-			action: 'game'
+		/* firing the event for game manager to deal with */
+		document.dispatchEvent(new CustomEvent("menuHit", {
+			detail: {
+				action: "game"
+			}
 		}));
 	},
 	stats: function() {
-		// TODO show stats
+		// TODO request stats
+		/*var stats = document.getElementById('stats'),
+			menu = document.getElementById('menu');
+		stats.innerHTML = "WIP";
+		menu.classList.add("hidden");
+		stats.classList.remove("hidden");*/
 	},
 	settings: function() {
 		// TODO change settings
 	},
 	about: function() {
 		// TODO show about
-	},
-	explode: function() {
 	}
 };

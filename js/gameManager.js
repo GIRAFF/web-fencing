@@ -95,9 +95,9 @@ class GameManager
 	initEvents()
 	{
 		// fires when menu item is selected
-		this.addEventListener("menuHit", function(e) {
-			if (e.action === 'game') {
-				console.log('boom!');
+		document.addEventListener("menuHit", function(e) {
+			if (e.detail.action === "game") {
+				document.getElementById("menu").classList.add("hidden");
 			}
 		});
 	}
