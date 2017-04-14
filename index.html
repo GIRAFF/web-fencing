@@ -3,23 +3,31 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Web Fancing</title>
-	<script src="./js/phaser.min.js"></script>
-    <script src="./js/gameManager.js"></script>
-    <script src="./js/weapon.js"></script>
-    <script src="./js/player.js"></script>
-    <script src="./js/dirrection.js"></script>
-    <script src="./js/main.js"></script>
-    <link href="https://fonts.googleapis.com/css?family=UnifrakturMaguntia"
-          rel="stylesheet">
-    <style>
-        body, html   {
-            margin: 0px;
-            padding: 0px;
-        }   
-    </style>
-    </head>
-    <body onload="init()">
-
-		<div id="game"></div>
+		<script src="./js/phaser.min.js"></script>
+		<script src="./js/gameManager.js"></script>
+		<script src="./js/menu.js"></script>
+		<script src="./js/weapon.js"></script>
+		<script src="./js/player.js"></script>
+		<script src="./js/direction.js"></script>
+		<script src="./js/main.js"></script>
+		<link href="./css/main.css" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=UnifrakturMaguntia"
+		rel="stylesheet">
+	</head>
+	<body onload="init()">
+		<div id="wrapper">
+			<div id="game"></div>
+			<div id="menu" class="over">
+				<nav id="game-menu">
+					<ul>
+						<li onclick="menu.game()">Play it!</li>
+						<li onclick="menu.stats()">Statistics</li>
+						<li onclick="menu.settings()">Settings</li>
+						<li onclick="menu.about()">About</li>
+						<li onclick="menu.explode()">Boom!</li>
+					</ul>
+				</nav>
+			</div>
+		</div>
 	</body>
 </html>
