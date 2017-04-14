@@ -28,13 +28,10 @@ class GameManager
 		this.bounce = 0;
 		this.platforms = game.add.group();
 		this.platforms.enableBody = true;
-		let ground = this.platforms.create(-1000, game.height-20, "a");
-		ground.scale.setTo(400, 1);
-		ground.body.immovable = true;
-		let platform1 = this.platforms.create(-100, game.height-160, "a");
-		platform1.scale.setTo(10, 1);
-		platform1.body.immovable = true;
-
+		this.map = new Map(this.platforms, game);
+		this.map.addPlatform({x:0, y: 20}, {w:5000, h: 32}, "tex1");
+		this.map.addPlatform({x:200, y: 100}, {w:100, h: 32}, "tex2");
+		this.map.addPlatform({x:400, y: 200}, {w:100, h: 32}, "tex2");
 		this.input = {
 			cursors: null,
 			esc: null,
