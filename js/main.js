@@ -29,10 +29,10 @@ function preload()
 */
 
 	game.load.spritesheet("player1",
-		"assets/pr00.png", 130, 163, 22, 6, 6);//player
+		"assets/pr00.png", 130, 163, 29, 6, 6);//player
 
 	game.load.spritesheet("player2",
-		"assets/pr01.png", 130, 163, 22, 6, 6);//player
+		"assets/pr01.png", 130, 163, 29, 6, 6);//player
 
     game.load.image("tex1", "assets/tex1.png", true);
     game.load.image("tex2", "assets/tex2.png", true);

@@ -192,8 +192,12 @@ class GameManager
 
 		if (control.left.isDown) {
 			this.player[index].left();
+			if(!this.player[index].flags.on_ground)
+				this.player[index].setAnimation("jump");
 		} else if (control.right.isDown) {
 			this.player[index].right(); 
+			if(!this.player[index].flags.on_ground)
+				this.player[index].setAnimation("jump");
 		}
 
 		// Подбор оружия
@@ -219,10 +223,10 @@ class GameManager
 			if (this.player[index].weapon != null)
 				this.player[index].attackThrow();
 		// Поднятие/Опускание шпаги
-		if (control.up.isDown)
+		if (control.up.isDown && this.player[index].flags.on_ground)
 			this.player[index].upDownArm(-1);
 		else
-			if (control.down.isDown)
+			if (control.down.isDown && !this.player[index].flags.on_ground)
 				this.player[index].upDownArm(1);
 
         this.player[index].update();	
