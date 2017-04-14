@@ -1,3 +1,0 @@
-/*  
-dirrection.js
-*/

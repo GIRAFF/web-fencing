@@ -31,6 +31,7 @@ class GameManager
 		let ground = this.platforms.create(-1000, game.height-20, "a");
 		ground.scale.setTo(400, 1);
 		ground.body.immovable = true;
+
 		let platform1 = this.platforms.create(-100, game.height-160, "a");
 		platform1.scale.setTo(10, 1);
 		platform1.body.immovable = true;
@@ -98,6 +99,17 @@ class GameManager
 			jump: game.input.keyboard.addKey(Phaser.Keyboard.Z),
 			attack_simple: game.input.keyboard.addKey(Phaser.Keyboard.X)
 		}
+    this.initEvents();
+	}
+  
+  initEvents()
+	{
+		// fires when menu item is selected
+		document.addEventListener("menuHit", function(e) {
+			if (e.detail.action === "game") {
+				document.getElementById("menu").classList.add("hidden");
+			}
+		});
 	}
 
 	addPlayer(game, pos, tname, color, dir)
@@ -213,8 +225,7 @@ class GameManager
 					else
 						this.weapon_group.children[i].body.enable = c;
 				}	
-
-
+    
 		// Атака
 		if (control.attack_simple.isDown)       //Неработающая атака
 			this.player[index].attackSimple();
@@ -227,7 +238,6 @@ class GameManager
 		else
 			if (control.down.isDown)
 				this.player[index].upDownArm(1);
-
         this.player[index].update();	
         //Обновляем положение шпаги
         if (this.player[index].weapon != null) {
@@ -251,7 +261,7 @@ class GameManager
             this.player[index].weapon.doReflection(this.player[index].dirrection);
         }
     }
-
+    
 	weaponsUpdate( game )
 	{
 		for (var i = 0; i < this.weapon_list.length; i++) {
