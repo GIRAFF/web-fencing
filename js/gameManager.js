@@ -3,16 +3,6 @@ class GameManager
 	constructor(game)
 	{
 		this.is_debug = true;
-		this.game_state = {
-			MENU: 0,
-			GAME: 3
-		};
-		this.styles = 
-			[
-				{ font: "20px UnifrakturMaguntia", fill: "#fac" },
-				{ font: "100px UnifrakturMaguntia", fill: "#ff3" }
-			];
-		this.curr_state = this.game_state.GAME;
 		this.player = [];
 		this.weapon_list = [];
 		this.weapon_group = game.add.group();
@@ -20,7 +10,6 @@ class GameManager
 		// TODO explain
 		this.win_or_lose_dir = 0;
 		this.current_winner_label;
-		this.pause_label;
 		this.gravity = 800;
 		this.camera = null; 
 		this.bounce = 0;
