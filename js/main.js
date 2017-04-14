@@ -27,11 +27,13 @@ function preload()
 		*/
 
 	game.load.spritesheet("player1",
-		"assets/pr00.png", 130, 163, 22, 6, 6);//player
+		"assets/pr00.png", 130, 163, 29, 6, 6);//player
 
 	game.load.spritesheet("player2",
-		"assets/pr01.png", 130, 163, 22, 6, 6);//player
+		"assets/pr01.png", 130, 163, 29, 6, 6);//player
 
+    game.load.image("tex1", "assets/tex1.png", true);
+    game.load.image("tex2", "assets/tex2.png", true);
 
 	/*game.load.audio("sound",
 		"assets/MainThemev2.wav", true);*/
@@ -52,11 +54,6 @@ function create()
 	gm.addPlayer(game, {x:1100, y:200}, "player2", 0xFFFFFF, -1);
 	gm.spawnWeapon( {x:110, y: 210}, 1);
 	gm.spawnWeapon( {x:1085, y: 210}, -1);
-
-	text = game.add.text(game.world.centerX,
-		game.world.centerY,
-		"this game",
-		styles[1]);
 }
 
 function update() 

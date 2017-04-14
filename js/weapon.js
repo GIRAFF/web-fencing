@@ -8,7 +8,7 @@ class Weapon
 		
         this.positions = { };
         this.positions["p-1"] = -20;
-        this.positions["p0"] = 10;
+        this.positions["p0"] = 4;
         this.positions["p1"] = 22;
         this.positions["p2"] = 40;
 

@@ -29,7 +29,10 @@ class Player
 		run_with_weapon: this.body.sprite.animations.add("run_with_weapon",
 					 [2,3,4,5,6,7,8,9], this.animation_velocity, true),
 		run_no_weapon: this.body.sprite.animations.add("run_no_weapon", 
-				[10, 11, 12, 13, 14, 15, 16, 17], this.animation_velocity, true)
+				[10, 11, 12, 13, 14, 15, 16, 17], this.animation_velocity, true),
+		jump: this.body.sprite.animations.add("jump", 
+				[22, 23, 24, 25, 26, 27, 28], this.animation_velocity, false)
+
 		};
 
 
@@ -60,7 +63,7 @@ class Player
 			if(this.flags.on_ground && game.time.now > this.times.jump) {
 				this.body.sprite.body.velocity.y = this.velocities.jump;
 				this.times.jump = game.time.now + 1000;
-				//this.setAnimation("jump");
+				this.setAnimation("jump");
 			}
 		}
 	}
@@ -83,6 +86,7 @@ class Player
 	if (!this.flags.is_dead) {
 		this.dirrection = -1;
 		this.body.sprite.body.velocity.x = -this.velocities.horizontal_velocity;
+		if(this.flags.on_ground)
 		if (this.weapon == null)	
 			this.setAnimation("run_no_weapon");
 		else 
@@ -95,6 +99,8 @@ class Player
 	if (!this.flags.is_dead) {
 		this.dirrection = 1;
 		this.body.sprite.body.velocity.x = this.velocities.horizontal_velocity;
+		if(this.flags.on_ground)
+
 		if (this.weapon == null)	
 			this.setAnimation("run_no_weapon");
 		else 
@@ -207,7 +213,10 @@ class Player
 		this.debug();
 
 	if (this.body.sprite.body.velocity.x == 0)
-		this.setAnimation("stay"+ this.weapon_position);
+		if(this.flags.on_ground)
+			this.setAnimation("stay"+ this.weapon_position);
+		else
+			this.setAnimation("jump");
 
 	
 	this.body.sprite.scale.setTo(this.dirrection, 1);
