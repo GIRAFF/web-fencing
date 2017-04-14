@@ -3,18 +3,6 @@ class GameManager
 	constructor(game)
 	{
 		this.is_debug = true;
-		this.game_state = {
-			MENU: 0,
-			CONFIG: 1,
-			PAUSE: 2,
-			GAME: 3
-		};
-		this.styles = 
-			[
-				{ font: "20px UnifrakturMaguntia", fill: "#fac" },
-				{ font: "100px UnifrakturMaguntia", fill: "#ff3" }
-			];
-		this.curr_state = this.game_state.GAME;
 		this.player = [];
 		this.weapon_list = [];
 		this.weapon_group = game.add.group();
@@ -22,7 +10,6 @@ class GameManager
 		// TODO explain
 		this.win_or_lose_dir = 0;
 		this.current_winner_label;
-		this.pause_label;
 		this.gravity = 800;
 		this.camera = null; 
 		this.bounce = 0;
@@ -32,6 +19,7 @@ class GameManager
 		this.map.addPlatform({x:0, y: 20}, {w:5000, h: 32}, "tex1");
 		this.map.addPlatform({x:200, y: 100}, {w:100, h: 32}, "tex2");
 		this.map.addPlatform({x:400, y: 200}, {w:100, h: 32}, "tex2");
+
 		this.input = {
 			cursors: null,
 			esc: null,
@@ -44,28 +32,14 @@ class GameManager
 		this.input.esc = game.input.keyboard.addKey(Phaser.Keyboard.ESC);
 		this.input.esc.onDown.add(() =>
 			{
-				var me = this;
-				// TODO fade
-				switch (me.curr_state) {
-					case me.game_state.GAME:
-						me.curr_state = me.game_state.PAUSE;
-						me.pause_label = game.add.text(
-							//game.world.centerX - 200,
-							//game.world.centerY,
-							400,
-							200,
-							"Press ESC to contunue",
-							styles[0]
-						);
-						me.pause_label.fixedToCamera = true;
-						//me.pause_label.anchor.setTo(0.5, 0.5);
-						game.paused = true;
-						break;
-					case me.game_state.PAUSE:
-						me.curr_state = me.game_state.GAME;
-						me.pause_label.destroy();
-						game.paused = false;
-						break;
+				var me = this,
+					layout = document.getElementById("pause");
+				if (game.paused) {
+					game.paused = false;
+					layout.classList.add("hidden");
+				} else {
+					game.paused = true;
+					layout.classList.remove("hidden");
 				}
 			});
 		let _input = this.input;
@@ -95,6 +69,17 @@ class GameManager
 			jump: game.input.keyboard.addKey(Phaser.Keyboard.Z),
 			attack_simple: game.input.keyboard.addKey(Phaser.Keyboard.X)
 		}
+    this.initEvents();
+	}
+  
+  initEvents()
+	{
+		// fires when menu item is selected
+		document.addEventListener("menuHit", function(e) {
+			if (e.detail.action === "game") {
+				document.getElementById("menu").classList.add("hidden");
+			}
+		});
 	}
 
 	addPlayer(game, pos, tname, color, dir)
@@ -214,8 +199,7 @@ class GameManager
 					else
 						this.weapon_group.children[i].body.enable = c;
 				}	
-
-
+    
 		// Атака
 		if (control.attack_simple.isDown)       //Неработающая атака
 			this.player[index].attackSimple();
@@ -228,7 +212,6 @@ class GameManager
 		else
 			if (control.down.isDown && !this.player[index].flags.on_ground)
 				this.player[index].upDownArm(1);
-
         this.player[index].update();	
         //Обновляем положение шпаги
         if (this.player[index].weapon != null) {
@@ -252,7 +235,7 @@ class GameManager
             this.player[index].weapon.doReflection(this.player[index].dirrection);
         }
     }
-
+    
 	weaponsUpdate( game )
 	{
 		for (var i = 0; i < this.weapon_list.length; i++) {

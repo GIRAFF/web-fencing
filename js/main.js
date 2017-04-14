@@ -11,13 +11,11 @@ function init()
 		update: update,
 		render: render
 	});
-
 }
 
 function preload()
 {
 	// loading font from google fonts too long loading !!!
-
 	// load weapon texture
 	game.load.spritesheet("weaponTexture",
 		"assets/rapire.png", 81, 9, 1, 0, 0); // sword
@@ -26,7 +24,7 @@ function preload()
 	// load player texture
 	/*game.load.spritesheet("player1",
 		"assets/AnimationRun_v1_1.png", 98, 107, 10, 6, 6);//player
-*/
+		*/
 
 	game.load.spritesheet("player1",
 		"assets/pr00.png", 130, 163, 29, 6, 6);//player
@@ -69,7 +67,6 @@ function update()
 	gm.controlInput(game, 0, gm.input.player2);
 	gm.cameraUpdate(game);
 }
-
 
 function render()
 {
