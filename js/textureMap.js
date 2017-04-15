@@ -2,19 +2,28 @@ class Map
 {
     constructor(group, game)
     {
-        //this.platform_list = [];
         this.group = group;
         this.g = game;
+        this.width = 5000;
+        this.height = game.world.height;
     }   
 
-    addPlatform(position, size, texture)
+    addPlatform(p)
     {
-        let a = this.group.create(position.x, this.g.world.height - position.y);
-        a.width = size.w;
-        a.height = size.h;
+        let a = this.group.create(p.x, this.g.world.height - p.y);
+        a.width = p.w;
+        a.height = p.h;
         a.body.immovable = true;
 
 		let texture_ground = this.g.add.tileSprite(
-            position.x, this.g.world.height - position.y, size.w, size.h, texture);
+            p.x, this.g.world.height - p.y, p.w, p.h, p.t);
+    }
+
+    InitFromList(list)
+    {
+        for(var i = 0; i < list.length; i++)
+        {
+            this.addPlatform(list[i]);
+        }
     }
 }

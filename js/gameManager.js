@@ -8,17 +8,15 @@ class GameManager
 		this.weapon_group = game.add.group();
 		this.weapon_group.enableBody = true;
 		// TODO explain
-		this.win_or_lose_dir = 0;
-		this.current_winner_label;
-		this.gravity = 800;
+		this.win_or_lose_dir = 0; // -1 направление влево, 1 вправо, 0 - никуда
+		this.current_winner_label; // Phaser.Text, сюда выводим GO и направление
+		this.gravity = 800; // Гравитация всех объектов
 		this.camera = null; 
-		this.bounce = 0;
-		this.platforms = game.add.group();
+		this.bounce = 0;  // Отскок от земли
+		this.platforms = game.add.group(); // Phaser.Group Платформы 
 		this.platforms.enableBody = true;
 		this.map = new Map(this.platforms, game);
-		this.map.addPlatform({x:0, y: 20}, {w:5000, h: 32}, "tex1");
-		this.map.addPlatform({x:200, y: 100}, {w:100, h: 32}, "tex2");
-		this.map.addPlatform({x:400, y: 200}, {w:100, h: 32}, "tex2");
+		this.map.InitFromList(map1);		
 
 		this.input = {
 			cursors: null,
@@ -88,9 +86,9 @@ class GameManager
 			tname, this.bounce, this.gravity, dir));
 	}
 
-	cameraInit(game)
+	cameraInit(game, t)
 	{
-		this.camera = game.add.sprite(game.world.centerX, 0,"X");
+		this.camera = game.add.sprite(game.world.centerX, 0, t);
 		game.physics.arcade.enable(this.camera);
 		this.camera.height = game.world.height;
 		this.camera.anchor.setTo(0.5,0);
@@ -124,12 +122,6 @@ class GameManager
 			else
 			this.camera.move(1, 0);
 		}
-		/*
-	   if (this.camera.position.x > this.player[0].body.sprite.position.x + 600)
-			this.player[0].die();
-	   if (this.camera.position.x > this.player[1].body.sprite.position.x - 600)
-			this.player[1].die();
-			*/
 	}
 	spawnWeapon(position, dir)
 	{
@@ -201,8 +193,10 @@ class GameManager
 				}	
     
 		// Атака
-		if (control.attack_simple.isDown)       //Неработающая атака
+		if (control.attack_simple.isDown) { //Неработающая атака
 			this.player[index].attackSimple();
+		}
+
 		if (control.throw_weapon.isDown) 
 			if (this.player[index].weapon != null)
 				this.player[index].attackThrow();
@@ -210,16 +204,18 @@ class GameManager
 		if (control.up.isDown && this.player[index].flags.on_ground)
 			this.player[index].upDownArm(-1);
 		else
-			if (control.down.isDown && !this.player[index].flags.on_ground)
+			if (control.down.isDown && this.player[index].flags.on_ground)
 				this.player[index].upDownArm(1);
         this.player[index].update();	
         //Обновляем положение шпаги
         if (this.player[index].weapon != null) {
             //Если стоит
             if (this.player[index].body.sprite.body.velocity.x == 0) {
+				if (!this.player[index].weapon.flags.is_attack) {
                 this.player[index].weapon.sprite.position.x =
                     this.player[index].body.sprite.position.x+
                         10*this.player[index].dirrection;
+				}
                 this.player[index].weapon.sprite.alpha = 1;
                 this.player[index].weapon.sprite.body.enable = true;
             }
@@ -243,6 +239,19 @@ class GameManager
 		}
 	}
 
+	playerPlayerEffects( game )
+	{
+		// Отталкивание двух игроков друг от друга
+		if (this.player[0].weapon != null && this.player[1].weapon != null) {
+			if (game.physics.arcade.intersects(this.player[0].weapon.sprite.body,
+			 this.player[1].weapon.sprite.body)) {
+				let power = 900;
+				this.player[0].body.sprite.body.velocity.x = -this.player[0].dirrection*power;
+				this.player[1].body.sprite.body.velocity.x = -this.player[1].dirrection*power;
+			 }
+		}
+	}
+
 	playersWeaponsUpdate( game )
 	{
 		// Вертикальное положение шпаги
@@ -255,6 +264,7 @@ class GameManager
 					this.player[i].dirrection);
 			}
 		}
+
 		// Шпага со шпагой
 		if (this.player[0].weapon != null && this.player[1].weapon != null) {
 			game.physics.arcade.collide(this.player[0].weapon.sprite, 
@@ -300,10 +310,21 @@ class GameManager
                                     this.weapon_list[j].dropWeapon();
                 }
 
-        if (this.player[0].flags.is_dead && game.time.now > this.player[0].times.death)
+        if (this.player[0].flags.is_dead && game.time.now > this.player[0].times.death) {
 				this.player[0].spawn( {x: this.camera.position.x - game.width/2 + 200, y: 200}, 1);
-        if (this.player[1].flags.is_dead && game.time.now > this.player[1].times.death)
+				this.win_or_lose_dir = -1;
+		}
+		else
+        if (this.player[1].flags.is_dead && game.time.now > this.player[1].times.death) {
 				this.player[1].spawn( {x: this.camera.position.x + game.width / 2 - 200, y: 200}, -1);
+				this.win_or_lose_dir = 1;
+		}
+		else if (this.player[1].flags.is_dead && this.player[0].flags.is_dead &&
+		game.time.now > this.player[0].times.death && game.time.now > this.player[1].times.death) {
+			this.player[0].spawn( {x: this.camera.position.x - game.width/2 + 200, y: 200}, 1);
+			this.player[1].spawn( {x: this.camera.position.x + game.width / 2 - 200, y: 200}, -1);
+			this.win_or_lose_dir = 0;
+		}
 
 		if (this.player[0].flags.is_dead && game.time.now > this.player[0].times.death)
 			this.player[0].spawn( {x: this.camera.position.x - game.width/2 + 200, y: 200}, 1);

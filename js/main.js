@@ -35,6 +35,7 @@ function preload()
     game.load.image("tex1", "assets/tex1.png", true);
     game.load.image("tex2", "assets/tex2.png", true);
 
+	game.load.image("textCamera", "assets/camera.png");
 	/*game.load.audio("sound",
 		"assets/MainThemev2.wav", true);*/
 	//game.load.image("test1", "assets/test1_v2.0.png");
@@ -47,7 +48,7 @@ function create()
 	game.world.setBounds(0, 0, 5000, 600);
 
 	gm = new GameManager(game);
-	gm.cameraInit(game);
+	gm.cameraInit(game, "textCamera");
 	gm.gravity = 800;
 	gm.bounce = 0.0;
 	gm.addPlayer(game, {x:100, y:200}, "player1", 0xFFFFFF, 1);
@@ -66,6 +67,8 @@ function update()
 	gm.controlInput(game, 1, gm.input.player1);
 	gm.controlInput(game, 0, gm.input.player2);
 	gm.cameraUpdate(game);
+
+	gm.playerPlayerEffects(game)
 }
 
 function render()
