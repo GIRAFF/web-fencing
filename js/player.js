@@ -12,6 +12,13 @@ class Player
 	this.flags = { on_ground: false, is_dead: false, is_seat: false	};
 	this.body = { animation: null, sprite: null	};
 	this.sizes = { stay: 100};
+	this.effects = {
+		blood_die: game.add.emitter(0,0,0)
+	};
+
+	this.effects.blood_die.makeParticles("blood");
+	this.effects.blood_die.gravity = 400;
+
 
 		// Init phaser sprite
 	this.body.sprite = game.add.sprite(position.x, position.y, texture_name);
@@ -127,6 +134,9 @@ class Player
 	die()
 	{
 	if (!this.flags.is_dead) {
+		this.effects.blood_die.x = this.body.sprite.position.x;
+    	this.effects.blood_die.y = this.body.sprite.position.y;
+		this.effects.blood_die.start(true, 4000, null, 100);
 		this.dropWeapon();
 		this.weapon_position = 2;
 		this.times.death = game.time.now + 3000;
@@ -134,7 +144,7 @@ class Player
 		this.body.sprite.visible = false;
 		this.body.sprite.body.enable = false;
 		this.flags.is_dead = true;
-		}
+		} 
 	}
 
 	spawn(position, dir)
