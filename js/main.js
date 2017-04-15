@@ -55,8 +55,7 @@ function create()
 	gm.addPlayer(game, {x:1100, y:200}, "player2", 0xFFFFFF, -1);
 	gm.spawnWeapon( {x:110, y: 210}, 1);
 	gm.spawnWeapon( {x:1085, y: 210}, -1);
-	//gm.cameraInit(game, "textCamera");
-	gm.cameraInit(game, "textureNameForDebug");
+	gm.cameraInit(game, "textCamera");
 }
 
 function update() 
@@ -93,5 +92,11 @@ function render()
 			game.debug.geom(line);
 			game.debug.rectangle(line);
 		}
+
+			let line = new Phaser.Line(gm.camera.position.x,
+			gm.camera.position.y, gm.camera.position.x +
+			gm.camera.width, gm.camera.position.y + gm.camera.height);
+			game.debug.geom(line);
+			game.debug.rectangle(line);
 	}
 }
