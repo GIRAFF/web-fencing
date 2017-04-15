@@ -99,24 +99,28 @@ class Weapon
     {
         this.debug();
              if (this.flags.is_fly) {
-                if(!(this.sprite.body.touching.none && this.flags.is_fly))
+                if (!(this.sprite.body.touching.none && this.flags.is_fly))
                     this.dropWeapon();
-                   // this.sprite.body.velocity.y = -this._gravity*2;
+            }
+
+            if (this.flags.is_attack) {
+                if (this.times.attack < game.time.now) {
+                    this.flags.is_attack = false;
+                    this.sprite.body.velocity.x = 0;
+                }
             }
     }
 
-    attackSimple()
+    attackSimple(dir)
     {
-         this.flags.is_attack = true;
-         this.times.attack = game.time.now + 1000;
-
-        	if ( game.time.now > this.times.attack) {
-                this.flags.is_attack = false;
-            } 
-
+        let lasts = 100; // how time is attacked
+        let vel = 400; // with how velocity attacked
+            this.times.attack = game.time.now + lasts;
+            this.flags.is_attack = true;
+            this.sprite.body.velocity.x = vel*dir;
     }
 
-    setPositionY( change, playerY ) 
+    setPositionY(change, playerY) 
     {
         this.sprite.position.y = playerY + this.positions[change];
     }

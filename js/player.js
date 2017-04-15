@@ -150,8 +150,9 @@ class Player
 	{
 	if (!this.flags.is_dead && this.weapon != null)
 		if ( game.time.now > this.times.weapon) {
-			this.weapon.attackSimple();
-			this.times.weapon = game.time.now + 300;
+			this.weapon.attackSimple(this.dirrection);
+			this.times.weapon = game.time.now + 800;
+			//this.setAnimation("simpleAttack");
 			}
 	}
 
