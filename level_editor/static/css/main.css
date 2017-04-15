@@ -12,16 +12,16 @@ body {
 #level-view {
 	display: inline-block;
 	overflow-x: scroll;
-	width: 78vw;
-	max-width: 78vw;
+	float: left;
+	width: 80vw;
+	max-width: 80vw;
 }
 
 #tiles {
 	display: inline-block;
-	top: 0;
-	width: 18vw;
-	max-width: 18vw;
-	margin: 0 0.5vw;
+	float: right;
+	width: 20vw;
+	max-width: 20vw;
 	/* TODO remove scrollbox when don't need */
 	overflow-y: scroll;
 	max-height: 60rem;
@@ -29,6 +29,8 @@ body {
 
 #tiles div {
 	background-color: #262626;
+	border-radius: 0.2rem;
+	margin: 1rem;
 }
 
 #tiles div:hover {
@@ -37,8 +39,8 @@ body {
 
 #tiles img {
 	display: block;
-	margin-left: auto;
-	margin-right: auto;
+	margin: 0 auto;
+	padding: 1rem 0;
 }
 
 #tiles p {

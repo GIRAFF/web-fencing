@@ -6,6 +6,9 @@ import ConfigParser
 import os.path as path
 import mimetypes as mime
 import time
+import json
+import os
+from pymediainfo import MediaInfo
 
 CONFIG_FILE = 'editor.cfg'
 HOST_NAME = 'localhost'
@@ -14,7 +17,7 @@ HOST_PORT = 8000
 cfg = None
 
 # TODO Server's responsibility is to generate .jsonp file with tile info
-# TODO from tiles_dir and save generated location from POST.
+#      from tiles_dir and save generated location from POST.
 
 class ResponseHandler(bhs.BaseHTTPRequestHandler):
     def do_HEAD(self):
@@ -24,7 +27,18 @@ class ResponseHandler(bhs.BaseHTTPRequestHandler):
 
     def do_GET(self):
         rp = realPath(self.path)
-        if path.isfile(rp):
+        if path.split(rp)[-1] == 'tiles.jsonp':
+            tiles = {}
+            tiles_dir = cfg.get('Host', 'tiles_dir')
+            pics = [f for f in os.listdir(tiles_dir)\
+                if path.isfile(path.join(tiles_dir, f))] 
+            for pic in pics:
+                tiles[pic] = { 'size': picSize(path.join(tiles_dir, pic)) }
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/x-javascript')
+            self.end_headers()
+            self.wfile.write('var tiles = ' + json.dumps(tiles))
+        elif path.isfile(rp):
             self.send_response(200)
             self.send_header('Content-Type', mime.guess_type(rp)[0])
             self.end_headers()
@@ -45,10 +59,18 @@ def realPath(p):
     if '..' in s:
         return ''
     rp = path.relpath(\
-        rp if s[0] == 'tiles' else cfg.get('Host','static_dir') + rp\
+        rp if s[0] == 'tiles' else\
+        path.join(cfg.get('Host','static_dir'), rp)\
     )
-    print rp
     return rp
+
+
+def picSize(path):
+    info = MediaInfo.parse(path)
+    for track in info.tracks:
+        if track.track_type == 'Image':
+            return { 'w': track.width, 'h': track.height }
+    raise Exception('"' + path + '" is not an image')
 
 
 if __name__ == '__main__':

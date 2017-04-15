@@ -28,5 +28,35 @@ var tiles = {
 	},
 	"tile0.png": {
 		"size": { "w": 16, "h": 16 }
+	},
+	"epic.png": {
+		"size": { "w": 16, "h": 16 }
+	},
+	"epic2.png": {
+		"size": { "w": 16, "h": 16 }
+	},
+	"epic3.png": {
+		"size": { "w": 16, "h": 16 }
+	},
+	"epic4.png": {
+		"size": { "w": 16, "h": 16 }
+	},
+	"epic5.png": {
+		"size": { "w": 16, "h": 16 }
+	},
+	"epic6.png": {
+		"size": { "w": 16, "h": 16 }
+	},
+	"epic7.png": {
+		"size": { "w": 16, "h": 16 }
+	},
+	"epic8.png": {
+		"size": { "w": 16, "h": 16 }
+	},
+	"epic9.png": {
+		"size": { "w": 16, "h": 16 }
+	},
+	"epic0.png": {
+		"size": { "w": 16, "h": 16 }
 	}
 }
