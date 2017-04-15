@@ -43,22 +43,25 @@ function preload()
 
 function create()
 {
+	//Внимание!!! Последовательность операций важна
 	game.physics.startSystem(Phaser.Physics.ARCADE);
 	game.stage.backgroundColor = "#000";
 	game.world.setBounds(0, 0, 5000, 600);
 
 	gm = new GameManager(game);
-	gm.cameraInit(game, "textCamera");
 	gm.gravity = 800;
 	gm.bounce = 0.0;
 	gm.addPlayer(game, {x:100, y:200}, "player1", 0xFFFFFF, 1);
 	gm.addPlayer(game, {x:1100, y:200}, "player2", 0xFFFFFF, -1);
 	gm.spawnWeapon( {x:110, y: 210}, 1);
 	gm.spawnWeapon( {x:1085, y: 210}, -1);
+	//gm.cameraInit(game, "textCamera");
+	gm.cameraInit(game, "textureNameForDebug");
 }
 
 function update() 
 {
+	//Внимание, не переставляйте местами вызовы функций, это очень опасно!
 	gm.collidePlayerPlatforms(game);
 	gm.collideWeaponsPlatform(game)
 	gm.weaponsUpdate(game);
@@ -69,6 +72,7 @@ function update()
 	gm.cameraUpdate(game);
 
 	gm.playerPlayerEffects(game)
+
 }
 
 function render()
@@ -81,6 +85,13 @@ function render()
 		for (var i = 0; i < gm.weapon_list.length; i++) {
 			game.debug.geom(gm.weapon_list[i].line_debug);
 			game.debug.rectangle(gm.weapon_list[i].line_debug);
+		}
+		for (var i = 0; i < gm.platforms.children.length; i++) {
+			let line = new Phaser.Line(gm.platforms.children[i].position.x,
+			gm.platforms.children[i].position.y, gm.platforms.children[i].position.x +
+			gm.platforms.children[i].width, gm.platforms.children[i].position.y + gm.platforms.children[i].height);
+			game.debug.geom(line);
+			game.debug.rectangle(line);
 		}
 	}
 }

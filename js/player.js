@@ -55,6 +55,7 @@ class Player
 		this.body.sprite.body.gravity.y = gravity;
 		this.body.sprite.body.setSize(30, this.sizes.stay, 35, 61);
 		this.body.sprite.anchor.setTo(0.5, 0.5);
+		this.body.sprite.body.collideWorldBounds = true;
 	}
 
 	jump()

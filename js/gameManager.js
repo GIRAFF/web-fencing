@@ -3,6 +3,7 @@ class GameManager
 	constructor(game)
 	{
 		this.is_debug = true;
+		this.debug_time = 0;
 		this.player = [];
 		this.weapon_list = [];
 		this.weapon_group = game.add.group();
@@ -47,6 +48,7 @@ class GameManager
 			left: game.input.keyboard.addKey(Phaser.Keyboard.A),
 			right: game.input.keyboard.addKey(Phaser.Keyboard.D),
 		};
+
 		this.input.player1 = {
 			up: _input.cursors.up,
 			down: _input.cursors.down,
@@ -55,8 +57,10 @@ class GameManager
 			take: game.input.keyboard.addKey(Phaser.Keyboard.L),
 			throw_weapon: game.input.keyboard.addKey(Phaser.Keyboard.J),
 			jump: game.input.keyboard.addKey(Phaser.Keyboard.I),
-			attack_simple: game.input.keyboard.addKey(Phaser.Keyboard.U)
+			attack_simple: game.input.keyboard.addKey(Phaser.Keyboard.U),
+			debug: game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
 		};
+
 		this.input.player2 = {
 			up: _input.wasd.up,
 			down: _input.wasd.down,
@@ -65,8 +69,10 @@ class GameManager
 			take: game.input.keyboard.addKey(Phaser.Keyboard.E),
 			throw_weapon: game.input.keyboard.addKey(Phaser.Keyboard.R),
 			jump: game.input.keyboard.addKey(Phaser.Keyboard.Z),
-			attack_simple: game.input.keyboard.addKey(Phaser.Keyboard.X)
+			attack_simple: game.input.keyboard.addKey(Phaser.Keyboard.X),
+			debug: game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
 		}
+
     this.initEvents();
 	}
   
@@ -91,21 +97,44 @@ class GameManager
 		this.camera = game.add.sprite(game.world.centerX, 0, t);
 		game.physics.arcade.enable(this.camera);
 		this.camera.height = game.world.height;
+		this.camera.width = 32;
 		this.camera.anchor.setTo(0.5,0);
 		game.camera.follow(this.camera);
 		this.camera.move = function(d, s)   
 		{
-			this.body.velocity.x = d * s;
+			if(this.win_or_lose_dir == s)
+				this.body.velocity.x = d * s;
 		};
+		this.camera.position.x = (this.player[0].body.sprite.position.x +
+			this.player[1].body.sprite.position.x)/2;
 	}
+
+
 
 	cameraUpdate(game)
 	{
-		if (!this.player[0].flags.is_dead && !this.player[1].flags.is_dead){
-			this.camera.position.x = (this.player[0].body.sprite.position.x +
-				this.player[1].body.sprite.position.x)/2;
-			return;
+			
+		switch(this.win_or_lose_dir)
+		{
+			case 1:
+					if (!this.player[0].flags.is_dead && !this.player[1].flags.is_dead){
+						let temp_pos = (this.player[0].body.sprite.position.x +
+							this.player[1].body.sprite.position.x)/2;
+						if (temp_pos > this.camera.position.x)
+						this.camera.position.x = temp_pos;
+					}
+			break;
+			case -1:
+					if (!this.player[0].flags.is_dead && !this.player[1].flags.is_dead){
+						let temp_pos = (this.player[0].body.sprite.position.x +
+							this.player[1].body.sprite.position.x)/2;
+						if (temp_pos < this.camera.position.x)
+						this.camera.position.x = temp_pos;
+					}
+			break;
 		}
+	
+
 
 		if (this.player[0].flags.is_dead
 			&& this.player[1].body.sprite.position.x - 150 > this.camera.position.x){
@@ -122,11 +151,24 @@ class GameManager
 			else
 			this.camera.move(1, 0);
 		}
+
+		for (var i = 0; i < this.player.length; i++)
+		if (this.player[i].body.sprite.position.x > this.camera.position.x + 600 ||
+			this.player[i].body.sprite.position.x < this.camera.position.x - 600) {
+				if (this.player[i].body.sprite.position.x > this.camera.position.x) {
+					this.player[i].body.sprite.body.velocity.x = 
+						-this.player[i].velocities.horizontal_velocity;
+				} else {
+					this.player[i].body.sprite.body.velocity.x = 
+						this.player[i].velocities.horizontal_velocity;
+				}
+			}
+		
 	}
+
 	spawnWeapon(position, dir)
 	{
 		this.weapon_list.push( 
-			//new Weapon(this.weapon_group, "weaponTexture",
 			new Weapon(this.weapon_group, "weaponTextureRotate",
 				this.gravity, this.bounce, position));
 
@@ -168,11 +210,11 @@ class GameManager
 		if (control.jump.isDown) this.player[index].jump(); 
 
 		if (control.left.isDown) {
-			this.player[index].left();
+				this.player[index].left();
 			if(!this.player[index].flags.on_ground)
 				this.player[index].setAnimation("jump");
 		} else if (control.right.isDown) {
-			this.player[index].right(); 
+				this.player[index].right();
 			if(!this.player[index].flags.on_ground)
 				this.player[index].setAnimation("jump");
 		}
@@ -230,6 +272,14 @@ class GameManager
             }
             this.player[index].weapon.doReflection(this.player[index].dirrection);
         }
+
+
+		if (control.debug.isDown) {
+			if(this.debug_time < game.time.now) {
+				this.debug_time = game.time.now + 100;
+				this.is_debug = !this.is_debug;
+			}
+		}
     }
     
 	weaponsUpdate( game )
