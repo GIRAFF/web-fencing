@@ -1,0 +1,32 @@
+var tiles = {
+	"tile.png": {
+		"size": { "w": 16, "h": 16 }
+	},
+	"tile2.png": {
+		"size": { "w": 16, "h": 16 }
+	},
+	"tile3.png": {
+		"size": { "w": 16, "h": 16 }
+	},
+	"tile4.png": {
+		"size": { "w": 16, "h": 16 }
+	},
+	"tile5.png": {
+		"size": { "w": 16, "h": 16 }
+	},
+	"tile6.png": {
+		"size": { "w": 16, "h": 16 }
+	},
+	"tile7.png": {
+		"size": { "w": 16, "h": 16 }
+	},
+	"tile8.png": {
+		"size": { "w": 16, "h": 16 }
+	},
+	"tile9.png": {
+		"size": { "w": 16, "h": 16 }
+	},
+	"tile0.png": {
+		"size": { "w": 16, "h": 16 }
+	}
+}

@@ -72,10 +72,10 @@ class GameManager
 			jump: game.input.keyboard.addKey(Phaser.Keyboard.Z),
 			attack_simple: game.input.keyboard.addKey(Phaser.Keyboard.X)
 		}
-    this.initEvents();
+		this.initEvents();
 	}
-  
-  initEvents()
+
+	initEvents()
 	{
 		// fires when menu item is selected
 		document.addEventListener("menuHit", function(e) {
@@ -87,7 +87,7 @@ class GameManager
 
 	addPlayer(game, pos, tname, color, dir)
 	{
-		this.player.push( new Player(game, {x:pos.x, y:pos.y}, color,
+		this.player.push(new Player(game, {x:pos.x, y:pos.y}, color,
 			tname, this.bounce, this.gravity, dir));
 	}
 
@@ -147,7 +147,6 @@ class GameManager
 
 	controlInput(game, index, control)
 	{
-	
 		// Контроль передвижения
 		if (!(control.right.isDown &&
 			control.left.isDown &&
@@ -235,14 +234,14 @@ class GameManager
         }
     }
     
-	weaponsUpdate( game )
+	weaponsUpdate(game)
 	{
 		for (var i = 0; i < this.weapon_list.length; i++) {
 			this.weapon_list[i].update();
 		}
 	}
 
-	playersWeaponsUpdate( game )
+	playersWeaponsUpdate(game)
 	{
 		// Вертикальное положение шпаги
 		for (var i = 0; i < this.player.length; i++) {
