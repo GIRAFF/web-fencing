@@ -147,14 +147,16 @@ class Player
 		} 
 	}
 
-	spawn(position, dir)
+	spawn(position, dir, game)
 	{
+		if (position.x > 0 && position.x < game.world.width){
 		this.body.sprite.visible = true;
 		this.body.sprite.position.x = position.x;
 		this.body.sprite.position.y = position.y;
 		this.body.sprite.body.enable = true;
 		this.dirrection = dir;
-		this.flags.is_dead = false;	
+		this.flags.is_dead = false;
+		}
 	}
 
 	attackSimple()
