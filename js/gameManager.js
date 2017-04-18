@@ -114,7 +114,6 @@ class GameManager
 
 	cameraUpdate(game)
 	{
-			
 		/*switch(this.win_or_lose_dir)
 		{
 			case 1:
@@ -142,7 +141,7 @@ class GameManager
 		   }
 	
 		if (this.player[0].flags.is_dead){
-			if (this.player[1].body.sprite.position.x  < this.camera.position.x)
+			if (this.player[1].body.sprite.position.x < this.camera.position.x)
 			   this.camera.move(-1, 200 + this.player[1].body.sprite.body.velocity.x);
            else
 			   if (this.player[1].body.sprite.position.x - 150 > this.camera.position.x
@@ -339,7 +338,7 @@ class GameManager
 				this.player[1].body.sprite, this.player[0].weapon.sprite);
 			if (c){
 				this.player[1].die();
-				
+				this.win_or_lose_dir = -1;
 			}
 		}
 		// Убийство шпагой в руках
@@ -348,6 +347,7 @@ class GameManager
 				this.player[0].body.sprite, this.player[1].weapon.sprite);
 			if (c){
 				this.player[0].die();
+				this.win_or_lose_dir = 1;
 			}
 		}
 		//Убийства летящими шпагами
@@ -356,11 +356,13 @@ class GameManager
                 if (game.physics.arcade.collide(this.player[1].body.sprite,
                     this.weapon_list[i].sprite)) {
                         this.player[1].die();
+						this.win_or_lose_dir = -1;
                         this.weapon_list[i].dropWeapon();
                 }
 				 if (game.physics.arcade.collide(this.player[0].body.sprite,
                     this.weapon_list[i].sprite)) {
                         this.player[0].die();
+						this.win_or_lose_dir = 1;
                         this.weapon_list[i].dropWeapon();
                 }
             }
