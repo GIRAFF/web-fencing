@@ -147,15 +147,16 @@ class Player
 		} 
 	}
 
-	spawn(position, dir, game)
+	spawn(position, dir, lenght, lvl, game)
 	{
-		if (position.x > 0 && position.x < game.world.width){
-		this.body.sprite.visible = true;
-		this.body.sprite.position.x = position.x;
-		this.body.sprite.position.y = position.y;
-		this.body.sprite.body.enable = true;
-		this.dirrection = dir;
-		this.flags.is_dead = false;
+		if (position.x > lenght*lvl + game.width
+		&&  position.x < lenght*(lvl+1) - game.width){
+			this.body.sprite.visible = true;
+			this.body.sprite.position.x = position.x;
+			this.body.sprite.position.y = position.y;
+			this.body.sprite.body.enable = true;
+			this.dirrection = dir;
+			this.flags.is_dead = false;
 		}
 	}
 
