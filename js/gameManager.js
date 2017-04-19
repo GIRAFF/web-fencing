@@ -20,7 +20,7 @@ class GameManager
 		this.map.InitFromList(map1);
 		this.lvl = 3;//	| 0 | 1 | 2 | 3 | 4 | 5 | 6 |
 					 // |___|___|___|___|___|___|___|
-		this.lvl_lenght = game.world.width/7;
+		this.lvl_length = game.world.width/7;
 		this.end_lvl_timer = 0;
 
 		this.input = {
@@ -107,8 +107,8 @@ class GameManager
 		
 		this.camera.move = function(d, s)   
 		{
-			if(this.position.x >= gm.lvl_lenght * gm.lvl + game.width/2
-			&& this.position.x <= gm.lvl_lenght * (gm.lvl+1) - game.width/2)
+			if(this.position.x >= gm.lvl_length * gm.lvl + game.width/2
+			&& this.position.x <= gm.lvl_length * (gm.lvl+1) - game.width/2)
 				this.body.velocity.x = d * s;
 			else
 				this.body.velocity.x = 0;
@@ -309,17 +309,17 @@ class GameManager
 
 	playersUpdate(game)
 	{
-		if (this.player[0].body.sprite.body.position.x >= this.lvl_lenght * (this.lvl+1) - 50 && game.time.now > this.end_lvl_timer){
+		if (this.player[0].body.sprite.body.position.x >= this.lvl_length * (this.lvl+1) - 50 && game.time.now > this.end_lvl_timer){
 			this.lvl++;
-			this.player[1].spawn({x:this.lvl_lenght*this.lvl + this.lvl_lenght/2 + 200, y: 200}, 1, this.lvl_lenght, this.lvl, game);
-			this.player[0].spawn({x:this.lvl_lenght*this.lvl + this.lvl_lenght/2 - 200, y: 200}, 1, this.lvl_lenght, this.lvl, game);
+			this.player[1].spawn({x:this.lvl_length*this.lvl + this.lvl_length/2 + 200, y: 200}, 1, this.lvl_length, this.lvl, game);
+			this.player[0].spawn({x:this.lvl_length*this.lvl + this.lvl_length/2 - 200, y: 200}, 1, this.lvl_length, this.lvl, game);
 			this.end_lvl_timer = game.time.now + 5000;
 			console.log("win");
 		}
-		if (this.player[1].body.sprite.body.position.x <= this.lvl_lenght * this.lvl + 50 && game.time.now > this.end_lvl_timer){
+		if (this.player[1].body.sprite.body.position.x <= this.lvl_length * this.lvl + 50 && game.time.now > this.end_lvl_timer){
 			this.lvl--;
-			this.player[1].spawn({x:this.lvl_lenght*this.lvl + this.lvl_lenght/2 + 200, y: 200}, 1, this.lvl_lenght, this.lvl, game);
-			this.player[0].spawn({x:this.lvl_lenght*this.lvl + this.lvl_lenght/2 - 200, y: 200}, 1, this.lvl_lenght, this.lvl, game);
+			this.player[1].spawn({x:this.lvl_length*this.lvl + this.lvl_length/2 + 200, y: 200}, 1, this.lvl_length, this.lvl, game);
+			this.player[0].spawn({x:this.lvl_length*this.lvl + this.lvl_length/2 - 200, y: 200}, 1, this.lvl_length, this.lvl, game);
 			this.end_lvl_timer = game.time.now + 5000;
 		}
 	}
@@ -404,25 +404,25 @@ class GameManager
                 }
 
         if (this.player[0].flags.is_dead && game.time.now > this.player[0].times.death) {
-				this.player[0].spawn( {x: this.camera.position.x - game.width/2 + 200, y: 200}, 1, this.lvl_lenght, this.lvl, game);
+				this.player[0].spawn( {x: this.camera.position.x - game.width/2 + 200, y: 200}, 1, this.lvl_length, this.lvl, game);
 				this.win_or_lose_dir = -1;
 		}
 		else
         if (this.player[1].flags.is_dead && game.time.now > this.player[1].times.death) {
-				this.player[1].spawn( {x: this.camera.position.x + game.width / 2 - 200, y: 200}, -1, this.lvl_lenght, this.lvl, game);
+				this.player[1].spawn( {x: this.camera.position.x + game.width / 2 - 200, y: 200}, -1, this.lvl_length, this.lvl, game);
 				this.win_or_lose_dir = 1;
 		}
 		else if (this.player[1].flags.is_dead && this.player[0].flags.is_dead &&
 		game.time.now > this.player[0].times.death && game.time.now > this.player[1].times.death) {
-			this.player[0].spawn( {x: this.camera.position.x - game.width/2 + 200, y: 200}, 1, this.lvl_lenght, this.lvl, game);
-			this.player[1].spawn( {x: this.camera.position.x + game.width / 2 - 200, y: 200}, -1, this.lvl_lenght, this.lvl, game);
+			this.player[0].spawn( {x: this.camera.position.x - game.width/2 + 200, y: 200}, 1, this.lvl_length, this.lvl, game);
+			this.player[1].spawn( {x: this.camera.position.x + game.width / 2 - 200, y: 200}, -1, this.lvl_length, this.lvl, game);
 			this.win_or_lose_dir = 0;
 		}
 
 		if (this.player[0].flags.is_dead && game.time.now > this.player[0].times.death)
-			this.player[0].spawn( {x: this.camera.position.x - game.width/2 + 200, y: 200}, 1, this.lvl_lenght, this.lvl, game);
+			this.player[0].spawn( {x: this.camera.position.x - game.width/2 + 200, y: 200}, 1, this.lvl_length, this.lvl, game);
 		if (this.player[1].flags.is_dead && game.time.now > this.player[1].times.death)
-			this.player[1].spawn( {x: this.camera.position.x + game.width / 2 - 200, y: 200}, -1, this.lvl_lenght, this.lvl, game);
+			this.player[1].spawn( {x: this.camera.position.x + game.width / 2 - 200, y: 200}, -1, this.lvl_length, this.lvl, game);
 	}
 
 	collidePlayerPlatforms(game)

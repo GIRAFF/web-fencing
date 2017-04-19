@@ -147,10 +147,10 @@ class Player
 		} 
 	}
 
-	spawn(position, dir, lenght, lvl, game)
+	spawn(position, dir, length, lvl, game)
 	{
-		if (position.x > lenght*lvl + game.width
-		&&  position.x < lenght*(lvl+1) - game.width){
+		if (position.x > length*lvl + game.width
+		&&  position.x < length*(lvl+1) - game.width){
 			this.body.sprite.visible = true;
 			this.body.sprite.position.x = position.x;
 			this.body.sprite.position.y = position.y;
