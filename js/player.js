@@ -147,14 +147,17 @@ class Player
 		} 
 	}
 
-	spawn(position, dir)
+	spawn(position, dir, length, lvl, game)
 	{
-		this.body.sprite.visible = true;
-		this.body.sprite.position.x = position.x;
-		this.body.sprite.position.y = position.y;
-		this.body.sprite.body.enable = true;
-		this.dirrection = dir;
-		this.flags.is_dead = false;	
+		if (position.x > length*lvl + game.width
+		&&  position.x < length*(lvl+1) - game.width){
+			this.body.sprite.visible = true;
+			this.body.sprite.position.x = position.x;
+			this.body.sprite.position.y = position.y;
+			this.body.sprite.body.enable = true;
+			this.dirrection = dir;
+			this.flags.is_dead = false;
+		}
 	}
 
 	attackSimple()

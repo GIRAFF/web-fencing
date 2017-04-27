@@ -17,7 +17,11 @@ class GameManager
 		this.platforms = game.add.group(); // Phaser.Group Платформы 
 		this.platforms.enableBody = true;
 		this.map = new Map(this.platforms, game);
-		this.map.InitFromList(map1);		
+		this.map.InitFromList(map1);
+		this.lvl = 3;//	| 0 | 1 | 2 | 3 | 4 | 5 | 6 |
+					 // |___|___|___|___|___|___|___|
+		this.lvl_length = game.world.width/7;
+		this.end_lvl_timer = 0;
 
 		this.input = {
 			cursors: null,
@@ -100,21 +104,23 @@ class GameManager
 		this.camera.width = 32;
 		this.camera.anchor.setTo(0.5,0);
 		game.camera.follow(this.camera);
+		
 		this.camera.move = function(d, s)   
 		{
-			if(this.win_or_lose_dir == s)
+			if(this.position.x >= gm.lvl_length * gm.lvl + game.width/2
+			&& this.position.x <= gm.lvl_length * (gm.lvl+1) - game.width/2)
 				this.body.velocity.x = d * s;
+			else
+				this.body.velocity.x = 0;
 		};
+		
 		this.camera.position.x = (this.player[0].body.sprite.position.x +
 			this.player[1].body.sprite.position.x)/2;
 	}
 
-
-
 	cameraUpdate(game)
 	{
-			
-		switch(this.win_or_lose_dir)
+		/*switch(this.win_or_lose_dir)
 		{
 			case 1:
 					if (!this.player[0].flags.is_dead && !this.player[1].flags.is_dead){
@@ -132,26 +138,34 @@ class GameManager
 						this.camera.position.x = temp_pos;
 					}
 			break;
-		}
+		}*/
 	
-
-
-		if (this.player[0].flags.is_dead
-			&& this.player[1].body.sprite.position.x - 150 > this.camera.position.x){
-			if(this.player[1].body.sprite.body.velocity.x > 0)
-			this.camera.move(-1, this.player[1].velocities.horizontal_velocity);
-			else
-			this.camera.move(-1, 0);
+		if(this.win_or_lose_dir != 0){
+			if (!this.player[0].flags.is_dead && !this.player[1].flags.is_dead){
+				this.camera.position.x = (this.player[0].body.sprite.position.x +
+									 this.player[1].body.sprite.position.x)/2;
+		   }
+	
+		if (this.player[0].flags.is_dead){
+			if (this.player[1].body.sprite.position.x < this.camera.position.x)
+			   this.camera.move(-1, 200 + this.player[1].body.sprite.body.velocity.x);
+           else
+			   if (this.player[1].body.sprite.position.x - 150 > this.camera.position.x
+		        && this.player[1].body.sprite.body.velocity.x <= 0){
+			       this.camera.move(-1, this.player[1].body.sprite.body.velocity.x);
+			}
 		}
-
-		if (this.player[1].flags.is_dead
-			&& this.player[0].body.sprite.position.x + 150 > this.camera.position.x){
-			if(this.player[0].body.sprite.body.velocity.x > 0)
-			this.camera.move(1, this.player[0].velocities.horizontal_velocity);
-			else
-			this.camera.move(1, 0);
-		}
-
+		
+       if (this.player[1].flags.is_dead){
+	       if (this.player[0].body.sprite.position.x > this.camera.position.x)
+			   this.camera.move(1, 200 + this.player[0].body.sprite.body.velocity.x);
+	       else 
+			   if (this.player[0].body.sprite.position.x + 150 > this.camera.position.x
+			    && this.player[0].body.sprite.body.velocity.x >= 0){
+				   this.camera.move(1, this.player[0].body.sprite.body.velocity.x);
+			}
+	    }
+		
 		for (var i = 0; i < this.player.length; i++)
 		if (this.player[i].body.sprite.position.x > this.camera.position.x + 600 ||
 			this.player[i].body.sprite.position.x < this.camera.position.x - 600) {
@@ -163,7 +177,11 @@ class GameManager
 						this.player[i].velocities.horizontal_velocity;
 				}
 			}
-		
+	   if (this.win_or_lose_dir == 1 && this.camera.position.x > this.player[1].body.sprite.position.x + 550)
+            this.player[1].die();
+       if (this.win_or_lose_dir == -1 && this.camera.position.x < this.player[0].body.sprite.position.x - 550)
+            this.player[0].die();
+		}
 	}
 
 	spawnWeapon(position, dir)
@@ -289,6 +307,23 @@ class GameManager
 		}
 	}
 
+	playersUpdate(game)
+	{
+		if (this.player[0].body.sprite.body.position.x >= this.lvl_length * (this.lvl+1) - 50 && game.time.now > this.end_lvl_timer){
+			this.lvl++;
+			this.player[1].spawn({x:this.lvl_length*this.lvl + this.lvl_length/2 + 200, y: 200}, 1, this.lvl_length, this.lvl, game);
+			this.player[0].spawn({x:this.lvl_length*this.lvl + this.lvl_length/2 - 200, y: 200}, 1, this.lvl_length, this.lvl, game);
+			this.end_lvl_timer = game.time.now + 5000;
+			console.log("win");
+		}
+		if (this.player[1].body.sprite.body.position.x <= this.lvl_length * this.lvl + 50 && game.time.now > this.end_lvl_timer){
+			this.lvl--;
+			this.player[1].spawn({x:this.lvl_length*this.lvl + this.lvl_length/2 + 200, y: 200}, 1, this.lvl_length, this.lvl, game);
+			this.player[0].spawn({x:this.lvl_length*this.lvl + this.lvl_length/2 - 200, y: 200}, 1, this.lvl_length, this.lvl, game);
+			this.end_lvl_timer = game.time.now + 5000;
+		}
+	}
+	
 	playerPlayerEffects( game )
 	{
 		// Отталкивание двух игроков друг от друга
@@ -324,13 +359,19 @@ class GameManager
 		if (this.player[0].weapon != null && !this.player[1].flags.is_dead) {
 			let c = game.physics.arcade.collide(
 				this.player[1].body.sprite, this.player[0].weapon.sprite);
-			if (c) this.player[1].die();
+			if (c){
+				this.player[1].die();
+				this.win_or_lose_dir = -1;
+			}
 		}
 		// Убийство шпагой в руках
 		if (this.player[1].weapon != null && !this.player[0].flags.is_dead) {
 			let c = game.physics.arcade.collide(
 				this.player[0].body.sprite, this.player[1].weapon.sprite);
-			if (c) this.player[0].die();
+			if (c){
+				this.player[0].die();
+				this.win_or_lose_dir = 1;
+			}
 		}
 		//Убийства летящими шпагами
 		for (var i = 0; i < this.weapon_list.length; i++) {
@@ -338,11 +379,13 @@ class GameManager
                 if (game.physics.arcade.collide(this.player[1].body.sprite,
                     this.weapon_list[i].sprite)) {
                         this.player[1].die();
+						this.win_or_lose_dir = -1;
                         this.weapon_list[i].dropWeapon();
                 }
 				 if (game.physics.arcade.collide(this.player[0].body.sprite,
                     this.weapon_list[i].sprite)) {
                         this.player[0].die();
+						this.win_or_lose_dir = 1;
                         this.weapon_list[i].dropWeapon();
                 }
             }
@@ -361,25 +404,25 @@ class GameManager
                 }
 
         if (this.player[0].flags.is_dead && game.time.now > this.player[0].times.death) {
-				this.player[0].spawn( {x: this.camera.position.x - game.width/2 + 200, y: 200}, 1);
+				this.player[0].spawn( {x: this.camera.position.x - game.width/2 + 200, y: 200}, 1, this.lvl_length, this.lvl, game);
 				this.win_or_lose_dir = -1;
 		}
 		else
         if (this.player[1].flags.is_dead && game.time.now > this.player[1].times.death) {
-				this.player[1].spawn( {x: this.camera.position.x + game.width / 2 - 200, y: 200}, -1);
+				this.player[1].spawn( {x: this.camera.position.x + game.width / 2 - 200, y: 200}, -1, this.lvl_length, this.lvl, game);
 				this.win_or_lose_dir = 1;
 		}
 		else if (this.player[1].flags.is_dead && this.player[0].flags.is_dead &&
 		game.time.now > this.player[0].times.death && game.time.now > this.player[1].times.death) {
-			this.player[0].spawn( {x: this.camera.position.x - game.width/2 + 200, y: 200}, 1);
-			this.player[1].spawn( {x: this.camera.position.x + game.width / 2 - 200, y: 200}, -1);
+			this.player[0].spawn( {x: this.camera.position.x - game.width/2 + 200, y: 200}, 1, this.lvl_length, this.lvl, game);
+			this.player[1].spawn( {x: this.camera.position.x + game.width / 2 - 200, y: 200}, -1, this.lvl_length, this.lvl, game);
 			this.win_or_lose_dir = 0;
 		}
 
 		if (this.player[0].flags.is_dead && game.time.now > this.player[0].times.death)
-			this.player[0].spawn( {x: this.camera.position.x - game.width/2 + 200, y: 200}, 1);
+			this.player[0].spawn( {x: this.camera.position.x - game.width/2 + 200, y: 200}, 1, this.lvl_length, this.lvl, game);
 		if (this.player[1].flags.is_dead && game.time.now > this.player[1].times.death)
-			this.player[1].spawn( {x: this.camera.position.x + game.width / 2 - 200, y: 200}, -1);
+			this.player[1].spawn( {x: this.camera.position.x + game.width / 2 - 200, y: 200}, -1, this.lvl_length, this.lvl, game);
 	}
 
 	collidePlayerPlatforms(game)
