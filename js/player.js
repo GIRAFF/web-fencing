@@ -89,9 +89,9 @@ class Player
 		}
 	}
 
-	left()
+	left(win_lose, camera_pos)
 	{
-	if (!this.flags.is_dead) {
+	if (!this.flags.is_dead) if(!(this.body.sprite.body.position.x < camera_pos - 582)){
 		this.dirrection = -1;
 		this.body.sprite.body.velocity.x = -this.velocities.horizontal_velocity;
 		if(this.flags.on_ground)
@@ -102,9 +102,9 @@ class Player
 		}
 	}
 
-	right()
+	right(win_lose, camera_pos)
 	{
-	if (!this.flags.is_dead) {
+	if (!this.flags.is_dead) if(!(this.body.sprite.body.position.x > camera_pos + 550)) {
 		this.dirrection = 1;
 		this.body.sprite.body.velocity.x = this.velocities.horizontal_velocity;
 		if(this.flags.on_ground)

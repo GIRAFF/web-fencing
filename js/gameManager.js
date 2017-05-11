@@ -148,11 +148,11 @@ class GameManager
 	
 		if (this.player[0].flags.is_dead){
 			if (this.player[1].body.sprite.position.x < this.camera.position.x)
-			   this.camera.move(-1, 200 + this.player[1].body.sprite.body.velocity.x);
+			   this.camera.move(-1, 200 - this.player[1].body.sprite.body.velocity.x);
            else
 			   if (this.player[1].body.sprite.position.x - 150 > this.camera.position.x
 		        && this.player[1].body.sprite.body.velocity.x <= 0){
-			       this.camera.move(-1, this.player[1].body.sprite.body.velocity.x);
+			       this.camera.move(-1, -this.player[1].body.sprite.body.velocity.x);
 			}
 		}
 		
@@ -178,9 +178,9 @@ class GameManager
 				}
 			}
 	   if (this.win_or_lose_dir == 1 && this.camera.position.x > this.player[1].body.sprite.position.x + 550)
-            this.player[1].die();
+            this.player[1].body.sprite.position.x = this.player[0].body.sprite.position.x + 600;
        if (this.win_or_lose_dir == -1 && this.camera.position.x < this.player[0].body.sprite.position.x - 550)
-            this.player[0].die();
+            this.player[0].body.sprite.position.x = this.player[1].body.sprite.position.x - 600;
 		}
 	}
 
@@ -228,11 +228,11 @@ class GameManager
 		if (control.jump.isDown) this.player[index].jump(); 
 
 		if (control.left.isDown) {
-				this.player[index].left();
+				this.player[index].left(this.win_or_lose_dir, this.camera.position.x);
 			if(!this.player[index].flags.on_ground)
 				this.player[index].setAnimation("jump");
 		} else if (control.right.isDown) {
-				this.player[index].right();
+				this.player[index].right(this.win_or_lose_dir, this.camera.position.x);
 			if(!this.player[index].flags.on_ground)
 				this.player[index].setAnimation("jump");
 		}
@@ -314,13 +314,14 @@ class GameManager
 			this.player[1].spawn({x:this.lvl_length*this.lvl + this.lvl_length/2 + 200, y: 200}, 1, this.lvl_length, this.lvl, game);
 			this.player[0].spawn({x:this.lvl_length*this.lvl + this.lvl_length/2 - 200, y: 200}, 1, this.lvl_length, this.lvl, game);
 			this.end_lvl_timer = game.time.now + 5000;
-			console.log("win");
+			//this.win_or_lose_dir = 0;
 		}
 		if (this.player[1].body.sprite.body.position.x <= this.lvl_length * this.lvl + 50 && game.time.now > this.end_lvl_timer){
 			this.lvl--;
 			this.player[1].spawn({x:this.lvl_length*this.lvl + this.lvl_length/2 + 200, y: 200}, 1, this.lvl_length, this.lvl, game);
 			this.player[0].spawn({x:this.lvl_length*this.lvl + this.lvl_length/2 - 200, y: 200}, 1, this.lvl_length, this.lvl, game);
 			this.end_lvl_timer = game.time.now + 5000;
+			//this.win_or_lose_dir = 0;
 		}
 	}
 	
