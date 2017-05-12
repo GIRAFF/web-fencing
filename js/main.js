@@ -51,7 +51,7 @@ function create()
 	gm.bounce = 0.0;
 	gm.addPlayer(game, {x:17200, y:200}, "player1", 0xFFFFFF, 1);
 	gm.addPlayer(game, {x:17800, y:200}, "player2", 0xFFFFFF, -1);
-	gm.spawnWeapon( {x:17100, y: 210}, 1);
+	gm.player[0].takeWeapon(gm.spawnWeapon( {x:17100, y: 210}, 1));
 	gm.spawnWeapon( {x:17900, y: 210}, -1);
 	gm.cameraInit(game, "textCamera");
 }
