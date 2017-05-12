@@ -8,12 +8,7 @@ var menu = {
 		}));
 	},
 	stats: function() {
-		// TODO request stats
-		/*var stats = document.getElementById('stats'),
-			menu = document.getElementById('menu');
-		stats.innerHTML = "WIP";
-		menu.classList.add("hidden");
-		stats.classList.remove("hidden");*/
+		showLayout("stats");
 	},
 	settings: function() {
 		// TODO change settings
@@ -22,3 +17,19 @@ var menu = {
 		// TODO show about
 	}
 };
+
+function showLayout(name)
+{
+	var layouts = document.getElementsByClassName("over");
+	for (var l = 0; l < layouts.length; ++l) {
+		if (layouts[l].id === name) {
+			if (layouts[l].classList.contains("hidden")) {
+				layouts[l].classList.remove("hidden");
+			}
+		} else {
+			if (!layouts[l].classList.contains("hidden")) {
+				layouts[l].classList.add("hidden");
+			}
+		}
+	}
+}

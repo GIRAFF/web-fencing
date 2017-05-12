@@ -13,13 +13,25 @@
 		<script src="./js/direction.js"></script>
 		<script src="./js/main.js"></script>
 		<link href="./css/main.css" rel="stylesheet">
-		<link href="https://fonts.googleapis.com/css?family=UnifrakturMaguntia"
-		rel="stylesheet">
+		<!--<link href="https://fonts.googleapis.com/css?family=UnifrakturMaguntia"
+		rel="stylesheet">-->
 	</head>
 	<body onload="init()">
 		<div id="wrapper">
 			<div id="game"></div>
-			<div id="menu" class="over">
+			<!--Direction arrows-->
+			<div id="player-left" class="over hidden">
+				<div class="wrapper">
+					<header>Go</header>
+				</div>
+			</div>
+			<div id="player-right" class="over hidden">
+				<div class="wrapper">
+					<header>Go</header>
+				</div>
+			</div>
+			<!--Menu layers-->
+			<div id="menu" class="over centered">
 				<nav id="game-menu">
 					<header>The Fancing Game</header>
 					<ul>
@@ -30,9 +42,24 @@
 					</ul>
 				</nav>
 			</div>
-			<div id="stats" class="over hidden">
+			<div id="stats" class="over hidden centered">
+				<ol>
+					<li>
+						<span class="username">Root</span>
+						<span class="score">UINT_MAX</span>
+					</li>
+					<li>
+						<span class="username">User</span>
+						<span class="score">7331</span>
+					</li>
+					<li>
+						<span class="username">Resu</span>
+						<span class="score">1337</span>
+					</li>
+				</ol>
+				<div onclick="showLayout('menu')">Back to menu</div>
 			</div>
-			<div id="pause" class="over hidden">
+			<div id="pause" class="over hidden centered">
 				<header>Press ESC to continue</header>
 			</div>
 		</div>

@@ -8,7 +8,6 @@ class GameManager
 		this.weapon_list = [];
 		this.weapon_group = game.add.group();
 		this.weapon_group.enableBody = true;
-		// TODO explain
 		this.win_or_lose_dir = 0; // -1 направление влево, 1 вправо, 0 - никуда
 		this.current_winner_label; // Phaser.Text, сюда выводим GO и направление
 		this.gravity = 800; // Гравитация всех объектов
@@ -77,10 +76,10 @@ class GameManager
 			debug: game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
 		}
 
-    this.initEvents();
+		this.initEvents();
 	}
   
-  initEvents()
+	initEvents()
 	{
 		// fires when menu item is selected
 		document.addEventListener("menuHit", function(e) {
@@ -139,8 +138,8 @@ class GameManager
 					}
 			break;
 		}*/
-	
-		if(this.win_or_lose_dir != 0){
+
+		if (this.win_or_lose_dir != 0) {
 			if (!this.player[0].flags.is_dead && !this.player[1].flags.is_dead){
 				this.camera.position.x = (this.player[0].body.sprite.position.x +
 									 this.player[1].body.sprite.position.x)/2;
@@ -154,33 +153,71 @@ class GameManager
 		        && this.player[1].body.sprite.body.velocity.x <= 0){
 			       this.camera.move(-1, -this.player[1].body.sprite.body.velocity.x);
 			}
-		}
-		
-       if (this.player[1].flags.is_dead){
-	       if (this.player[0].body.sprite.position.x > this.camera.position.x)
-			   this.camera.move(1, 200 + this.player[0].body.sprite.body.velocity.x);
-	       else 
-			   if (this.player[0].body.sprite.position.x + 150 > this.camera.position.x
-			    && this.player[0].body.sprite.body.velocity.x >= 0){
-				   this.camera.move(1, this.player[0].body.sprite.body.velocity.x);
+
+			if (this.player[0].flags.is_dead){
+				if (this.player[1].body.sprite.position.x < this.camera.position.x)
+					this.camera.move(-1, 200 + this.player[1].body.sprite.body.velocity.x);
+				else
+					if (this.player[1].body.sprite.position.x - 150 > this.camera.position.x
+						&& this.player[1].body.sprite.body.velocity.x <= 0){
+						this.camera.move(-1, this.player[1].body.sprite.body.velocity.x);
+					}
 			}
-	    }
-		
-		for (var i = 0; i < this.player.length; i++)
-		if (this.player[i].body.sprite.position.x > this.camera.position.x + 600 ||
-			this.player[i].body.sprite.position.x < this.camera.position.x - 600) {
-				if (this.player[i].body.sprite.position.x > this.camera.position.x) {
-					this.player[i].body.sprite.body.velocity.x = 
-						-this.player[i].velocities.horizontal_velocity;
-				} else {
-					this.player[i].body.sprite.body.velocity.x = 
-						this.player[i].velocities.horizontal_velocity;
+
+			if (this.player[1].flags.is_dead){
+				if (this.player[0].body.sprite.position.x > this.camera.position.x)
+					this.camera.move(1, 200 + this.player[0].body.sprite.body.velocity.x);
+				else 
+					if (this.player[0].body.sprite.position.x + 150 > this.camera.position.x
+						&& this.player[0].body.sprite.body.velocity.x >= 0){
+						this.camera.move(1, this.player[0].body.sprite.body.velocity.x);
+					}
+			}
+
+			for (var i = 0; i < this.player.length; i++)
+				if (this.player[i].body.sprite.position.x > this.camera.position.x + 600 ||
+					this.player[i].body.sprite.position.x < this.camera.position.x - 600) {
+					if (this.player[i].body.sprite.position.x > this.camera.position.x) {
+						this.player[i].body.sprite.body.velocity.x = 
+							-this.player[i].velocities.horizontal_velocity;
+					} else {
+						this.player[i].body.sprite.body.velocity.x = 
+							this.player[i].velocities.horizontal_velocity;
+					}
 				}
+			if (this.win_or_lose_dir == 1
+				&& this.camera.position.x
+				> this.player[1].body.sprite.position.x + 550) {
+				this.player[1].die();
+			}
+			if (this.win_or_lose_dir == -1
+				&& this.camera.position.x
+				< this.player[0].body.sprite.position.x - 550) {
+				this.player[0].die();
 			}
 	   if (this.win_or_lose_dir == 1 && this.camera.position.x > this.player[1].body.sprite.position.x + 550)
             this.player[1].body.sprite.position.x = this.player[0].body.sprite.position.x + 600;
        if (this.win_or_lose_dir == -1 && this.camera.position.x < this.player[0].body.sprite.position.x - 550)
             this.player[0].body.sprite.position.x = this.player[1].body.sprite.position.x - 600;
+		}
+	}
+
+	updateMoveLabels()
+	{
+		var pl_label= document.getElementById('player-left');
+		var pr_label= document.getElementById('player-right');
+		switch (this.win_or_lose_dir) {
+			case -1:
+				pl_label.classList.remove('hidden');
+				pr_label.classList.add('hidden');
+			break;
+			case 1:
+				pr_label.classList.remove('hidden');
+				pl_label.classList.add('hidden');
+			break;
+			default:
+				pl_label.classList.remove('hidden');
+				pr_label.classList.remove('hidden');
 		}
 	}
 
@@ -196,7 +233,6 @@ class GameManager
 
 	controlInput(game, index, control)
 	{
-	
 		// Контроль передвижения
 		if (!(control.right.isDown &&
 			control.left.isDown &&
@@ -300,7 +336,7 @@ class GameManager
 		}
     }
     
-	weaponsUpdate( game )
+	weaponsUpdate(game)
 	{
 		for (var i = 0; i < this.weapon_list.length; i++) {
 			this.weapon_list[i].update();
@@ -325,7 +361,7 @@ class GameManager
 		}
 	}
 	
-	playerPlayerEffects( game )
+	playerPlayerEffects(game)
 	{
 		// Отталкивание двух игроков друг от друга
 		if (this.player[0].weapon != null && this.player[1].weapon != null) {
@@ -338,7 +374,7 @@ class GameManager
 		}
 	}
 
-	playersWeaponsUpdate( game )
+	playersWeaponsUpdate(game)
 	{
 		// Вертикальное положение шпаги
 		for (var i = 0; i < this.player.length; i++) {
@@ -361,8 +397,8 @@ class GameManager
 			let c = game.physics.arcade.collide(
 				this.player[1].body.sprite, this.player[0].weapon.sprite);
 			if (c){
-				this.player[1].die();
 				this.win_or_lose_dir = -1;
+				this.player[1].die();
 			}
 		}
 		// Убийство шпагой в руках
@@ -370,8 +406,8 @@ class GameManager
 			let c = game.physics.arcade.collide(
 				this.player[0].body.sprite, this.player[1].weapon.sprite);
 			if (c){
-				this.player[0].die();
 				this.win_or_lose_dir = 1;
+				this.player[0].die();
 			}
 		}
 		//Убийства летящими шпагами
