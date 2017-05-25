@@ -165,10 +165,10 @@ class GameManager
        if (this.win_or_lose_dir == -1 && this.camera.position.x < this.player[0].body.sprite.position.x - 550)
             this.player[0].body.sprite.position.x = this.player[1].body.sprite.position.x - 600;
 		
-		if (camera.position.x > game.world.width)
-			camera.position.x = game.world.width;
-		if (camera.position.x < 0)
-			camera.position.x = 0;
+		if (this.camera.position.x > game.world.width)
+			this.camera.position.x = game.world.width;
+		if (this.camera.position.x < 0)
+			this.camera.position.x = 0;
 		}
 	}
 
