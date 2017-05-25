@@ -35,6 +35,10 @@
 	color: #fff;
 }
 
+.centered {
+	text-align: center;
+}
+
 .over span {
 	color: #fff;
 	font-size: 3rem;
@@ -43,26 +47,77 @@
 	left: 0;
 }
 
-#game-menu {
-	text-align: center;
-}
-
-#game-menu li {
+#game-menu li,
+#stats * {
 	font-family: CabinSketch, cursive;
 	font-size: 2.6rem;
 	color: #fff;
 }
 
-#game-menu li:hover {
+#game-menu li:hover,
+#stats div:hover {
 	text-shadow: 0.2rem 0.2rem 0.5rem #aaa;
 }
 
-#game-menu header {
+#game-menu header,
+#player-left header,
+#player-right header {
 	font-family: UnifrakurCook, bold;
 	font-size: 3.4rem;
 	text-shadow: 0.2rem 0.2rem #333;
-	color: #ff0;
 	margin: 4rem 0;
+}
+
+#game-menu header {
+	color: #ff0;
+}
+#player-left header,
+#player-right header {
+	margin-top: 3rem;
+}
+#player-left header {
+	color: #f00;
+}
+#player-right header {
+	color: #00f;
+}
+#player-left .wrapper {
+	float: left;
+	margin-left: 3rem;
+}
+#player-right .wrapper {
+	float: right;
+	margin-right: 3rem;
+}
+
+svg {
+	vertical-align: top;
+	margin-top: 3rem;
+}
+svg path {
+	fill-opacity: 1;
+	fill-rule: nonzero;
+	stroke: none;
+	stroke-width: 0.03527778;
+	transform: scale(2);
+}
+#player-left path {
+	fill: #f00;
+}
+#player-right path {
+	fill: #00f;
+}
+
+#stats ol {
+	margin: 4rem 0;
+}
+
+.username {
+	/*float: left;*/
+}
+
+.score {
+	/*float: right;*/
 }
 
 #pause header {
@@ -71,5 +126,5 @@
 	text-shadow: 0.2rem 0.2rem #333;
 	color: #ff0;
 	margin: 10rem 0;
-	text-align: center;
+	/*text-align: center;*/
 }

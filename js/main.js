@@ -60,7 +60,7 @@ function create()
 
 function update() 
 {
-	//Внимание, не переставляйте местами вызовы функций, это очень опасно!
+	// Внимание, не переставляйте местами вызовы функций, это очень опасно!
 	gm.collidePlayerPlatforms(game);
 	gm.collideWeaponsPlatform(game)
 	gm.weaponsUpdate(game);
@@ -70,6 +70,8 @@ function update()
 	gm.controlInput(game, 0, gm.input.player2);
 	gm.cameraUpdate(game);
 	gm.playerPlayerEffects(game)
+	gm.updateMoveLabels();
+
 }
 
 function render()
