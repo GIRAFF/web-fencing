@@ -18,10 +18,13 @@ class GameManager
 		this.platforms.enableBody = true;
 		this.map = new Map(this.platforms, game);
 		this.map.InitFromList(map1);
-		this.lvl = 3;//	| 0 | 1 | 2 | 3 | 4 | 5 | 6 |
+		//this.lvl = 3;//	| 0 | 1 | 2 | 3 | 4 | 5 | 6 |
 					 // |___|___|___|___|___|___|___|
-		this.lvl_length = game.world.width/7;
+		//this.lvl_length = game.world.width/7;
 		this.end_lvl_timer = 0;
+		this.win = -1;
+		this.back = [];
+		this.anim = [];
 
 		this.input = {
 			cursors: null,
@@ -284,7 +287,7 @@ class GameManager
                 this.player[index].weapon.sprite.alpha = 0;
 				this.player[index].weapon.sprite.position.x =
                 this.player[index].body.sprite.position.x-
-                        20*this.player[index].dirrection;
+                        50 * this.player[index].dirrection;
 				this.player[index].weapon.sprite.position.y =
                 this.player[index].body.sprite.position.y-20;
             }
@@ -309,19 +312,25 @@ class GameManager
 
 	playersUpdate(game)
 	{
-		if (this.player[0].body.sprite.body.position.x >= this.lvl_length * (this.lvl+1) - 50 && game.time.now > this.end_lvl_timer){
+		/*if (this.player[0].body.sprite.body.position.x >= this.lvl_length * (this.lvl+1) - 50 && game.time.now > this.end_lvl_timer){
 			this.lvl++;
-			this.player[1].spawn({x:this.lvl_length*this.lvl + this.lvl_length/2 + 200, y: 200}, 1, this.lvl_length, this.lvl, game);
-			this.player[0].spawn({x:this.lvl_length*this.lvl + this.lvl_length/2 - 200, y: 200}, 1, this.lvl_length, this.lvl, game);
+			this.player[1].spawn({x:this.lvl_length*this.lvl + this.lvl_length/2 + 200, y: 200}, 1, game);
+			this.player[0].spawn({x:this.lvl_length*this.lvl + this.lvl_length/2 - 200, y: 200}, 1,  game);
 			this.end_lvl_timer = game.time.now + 5000;
 			//this.win_or_lose_dir = 0;
 		}
 		if (this.player[1].body.sprite.body.position.x <= this.lvl_length * this.lvl + 50 && game.time.now > this.end_lvl_timer){
 			this.lvl--;
-			this.player[1].spawn({x:this.lvl_length*this.lvl + this.lvl_length/2 + 200, y: 200}, 1, this.lvl_length, this.lvl, game);
-			this.player[0].spawn({x:this.lvl_length*this.lvl + this.lvl_length/2 - 200, y: 200}, 1, this.lvl_length, this.lvl, game);
+			this.player[1].spawn({x:this.lvl_length*this.lvl + this.lvl_length/2 + 200, y: 200}, 1,  game);
+			this.player[0].spawn({x:this.lvl_length*this.lvl + this.lvl_length/2 - 200, y: 200}, 1,  game);
 			this.end_lvl_timer = game.time.now + 5000;
 			//this.win_or_lose_dir = 0;
+		}*/
+		if (this.player[0].body.sprite.body.position.x > game.world.width - 300){
+			this.win = 0;
+		}
+		if (this.player[1].body.sprite.body.position.x > game.world.width - 300){
+			this.win = 1;
 		}
 	}
 	
@@ -404,26 +413,26 @@ class GameManager
                                     this.weapon_list[j].dropWeapon();
                 }
 
-        if (this.player[0].flags.is_dead && game.time.now > this.player[0].times.death) {
-				this.player[0].spawn( {x: this.camera.position.x - game.width/2 + 200, y: 200}, 1, this.lvl_length, this.lvl, game);
+        /*if (this.player[0].flags.is_dead && game.time.now > this.player[0].times.death && this.win == -1) {
+				this.player[0].spawn( {x: this.camera.position.x - game.width/2 + 200, y: 200}, 1,  game);
 				this.win_or_lose_dir = -1;
 		}
 		else
-        if (this.player[1].flags.is_dead && game.time.now > this.player[1].times.death) {
-				this.player[1].spawn( {x: this.camera.position.x + game.width / 2 - 200, y: 200}, -1, this.lvl_length, this.lvl, game);
+        if (this.player[1].flags.is_dead && game.time.now > this.player[1].times.death && this.win == -1) {
+				this.player[1].spawn( {x: this.camera.position.x + game.width / 2 - 200, y: 200}, -1,  game);
 				this.win_or_lose_dir = 1;
 		}
 		else if (this.player[1].flags.is_dead && this.player[0].flags.is_dead &&
-		game.time.now > this.player[0].times.death && game.time.now > this.player[1].times.death) {
-			this.player[0].spawn( {x: this.camera.position.x - game.width/2 + 200, y: 200}, 1, this.lvl_length, this.lvl, game);
-			this.player[1].spawn( {x: this.camera.position.x + game.width / 2 - 200, y: 200}, -1, this.lvl_length, this.lvl, game);
+		game.time.now > this.player[0].times.death && game.time.now > this.player[1].times.death && this.win == -1) {
+			this.player[0].spawn( {x: this.camera.position.x - game.width/2 + 200, y: 200}, 1,  game);
+			this.player[1].spawn( {x: this.camera.position.x + game.width / 2 - 200, y: 200}, -1,  game);
 			this.win_or_lose_dir = 0;
-		}
+		}*/
 
-		if (this.player[0].flags.is_dead && game.time.now > this.player[0].times.death)
-			this.player[0].spawn( {x: this.camera.position.x - game.width/2 + 200, y: 200}, 1, this.lvl_length, this.lvl, game);
-		if (this.player[1].flags.is_dead && game.time.now > this.player[1].times.death)
-			this.player[1].spawn( {x: this.camera.position.x + game.width / 2 - 200, y: 200}, -1, this.lvl_length, this.lvl, game);
+		if (this.player[0].flags.is_dead && game.time.now > this.player[0].times.death && this.win == -1)
+			this.player[0].spawn( {x: this.camera.position.x - game.width/2 + 200, y: 200}, 1,  game);
+		if (this.player[1].flags.is_dead && game.time.now > this.player[1].times.death && this.win == -1)
+			this.player[1].spawn( {x: this.camera.position.x + game.width / 2 - 200, y: 200}, -1,  game);
 	}
 
 	collidePlayerPlatforms(game)
@@ -439,6 +448,19 @@ class GameManager
 		for (var i = 0; i < this.weapon_list.length; i++) {
 			this.weapon_list[i].flags.on_ground = game.physics.arcade.collide(
 				this.weapon_list[i].sprite, this.platforms);
+		}
+	}
+	
+	mapInit(bg)
+	{
+		for (var i = 0; i < 5; i++){
+			this.back[i] = game.add.image(0, 0, bg);
+			this.back[i].scale.set(1.2);96
+			this.back[i].smoothed = false;
+			//this.back[i].position.x = 15400 + i*960;
+			this.back[i].position.x = i*960;
+			this.anim[i] = this.back[i].animations.add('play');
+			this.anim[i].play(3, true);
 		}
 	}
 }

@@ -108,7 +108,6 @@ class Player
 		this.dirrection = 1;
 		this.body.sprite.body.velocity.x = this.velocities.horizontal_velocity;
 		if(this.flags.on_ground)
-
 		if (this.weapon == null)	
 			this.setAnimation("run_no_weapon");
 		else 
@@ -147,17 +146,15 @@ class Player
 		} 
 	}
 
-	spawn(position, dir, length, lvl, game)
+	spawn(position, dir, game)
 	{
-		if (position.x > length*lvl + game.width
-		&&  position.x < length*(lvl+1) - game.width){
 			this.body.sprite.visible = true;
 			this.body.sprite.position.x = position.x;
 			this.body.sprite.position.y = position.y;
 			this.body.sprite.body.enable = true;
 			this.dirrection = dir;
 			this.flags.is_dead = false;
-		}
+			gm.spawnWeapon( {x:position.x, y: position.y}, -1);
 	}
 
 	attackSimple()
