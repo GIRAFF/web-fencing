@@ -75,17 +75,17 @@
 #player-right header {
 	margin-top: 3rem;
 }
-#player-left header {
+#player-right header {
 	color: #f00;
 }
-#player-right header {
+#player-left header {
 	color: #00f;
 }
-#player-left .wrapper {
+#player-right .wrapper {
 	float: left;
 	margin-left: 3rem;
 }
-#player-right .wrapper {
+#player-left .wrapper {
 	float: right;
 	margin-right: 3rem;
 }
