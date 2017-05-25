@@ -2,7 +2,7 @@ class GameManager
 {
 	constructor(game)
 	{
-		this.is_debug = true;
+		this.is_debug = false;
 		this.debug_time = 0;
 		this.player = [];
 		this.weapon_list = [];
@@ -62,7 +62,7 @@ class GameManager
 			left: _input.cursors.left,
 			right: _input.cursors.right,
 			take: game.input.keyboard.addKey(Phaser.Keyboard.L),
-			throw_weapon: game.input.keyboard.addKey(Phaser.Keyboard.J),
+			throw_weapon: game.input.keyboard.addKey(Phaser.Keyboard.U),
 			jump: game.input.keyboard.addKey(Phaser.Keyboard.I),
 			attack_simple: game.input.keyboard.addKey(Phaser.Keyboard.U),
 			debug: game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
@@ -74,7 +74,7 @@ class GameManager
 			left: _input.wasd.left,
 			right: _input.wasd.right,
 			take: game.input.keyboard.addKey(Phaser.Keyboard.E),
-			throw_weapon: game.input.keyboard.addKey(Phaser.Keyboard.R),
+			throw_weapon: game.input.keyboard.addKey(Phaser.Keyboard.X),
 			jump: game.input.keyboard.addKey(Phaser.Keyboard.Z),
 			attack_simple: game.input.keyboard.addKey(Phaser.Keyboard.X),
 			debug: game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
