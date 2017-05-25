@@ -207,7 +207,6 @@ class GameManager
 				pl_label.classList.remove('hidden');
 				pr_label.classList.remove('hidden');
 		}
-	}
 
 	spawnWeapon(position, dir)
 	{
