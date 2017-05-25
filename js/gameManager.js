@@ -121,7 +121,7 @@ class GameManager
 	}
 
 	cameraUpdate(game)
-
+	{
 		if (this.win_or_lose_dir != 0) {
 			if (!this.player[0].flags.is_dead && !this.player[1].flags.is_dead){
 				this.camera.position.x = (this.player[0].body.sprite.position.x +
