@@ -75,10 +75,10 @@
 #player-right header {
 	margin-top: 3rem;
 }
-#player-right header {
+#player-left header {
 	color: #f00;
 }
-#player-left header {
+#player-right header {
 	color: #00f;
 }
 #player-right .wrapper {
