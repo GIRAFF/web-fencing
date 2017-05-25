@@ -320,6 +320,7 @@ class GameManager
 				this.player[1].body.sprite.body.position.x = game.width/2;
 				winImage.position.x = game.width/2 - 224;
 			}
+		}
 	}
 	
 	playerPlayerEffects( game )
