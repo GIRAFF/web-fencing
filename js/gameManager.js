@@ -110,8 +110,8 @@ class GameManager
 		
 		this.camera.move = function(d, s)   
 		{
-			if(this.position.x >= gm.lvl_length * gm.lvl + game.width/2
-			&& this.position.x <= gm.lvl_length * (gm.lvl+1) - game.width/2)
+			if(this.position.x >= game.width/2
+			&& this.position.x <= game.world.width - game.width/2)
 				this.body.velocity.x = d * s;
 			else
 				this.body.velocity.x = 0;
@@ -122,27 +122,7 @@ class GameManager
 	}
 
 	cameraUpdate(game)
-	{
-		/*switch(this.win_or_lose_dir)
-		{
-			case 1:
-					if (!this.player[0].flags.is_dead && !this.player[1].flags.is_dead){
-						let temp_pos = (this.player[0].body.sprite.position.x +
-							this.player[1].body.sprite.position.x)/2;
-						if (temp_pos > this.camera.position.x)
-						this.camera.position.x = temp_pos;
-					}
-			break;
-			case -1:
-					if (!this.player[0].flags.is_dead && !this.player[1].flags.is_dead){
-						let temp_pos = (this.player[0].body.sprite.position.x +
-							this.player[1].body.sprite.position.x)/2;
-						if (temp_pos < this.camera.position.x)
-						this.camera.position.x = temp_pos;
-					}
-			break;
-		}*/
-	
+	{	
 		if(this.win_or_lose_dir != 0){
 			if (!this.player[0].flags.is_dead && !this.player[1].flags.is_dead){
 				this.camera.position.x = (this.player[0].body.sprite.position.x +
@@ -184,6 +164,11 @@ class GameManager
             this.player[1].body.sprite.position.x = this.player[0].body.sprite.position.x + 600;
        if (this.win_or_lose_dir == -1 && this.camera.position.x < this.player[0].body.sprite.position.x - 550)
             this.player[0].body.sprite.position.x = this.player[1].body.sprite.position.x - 600;
+		
+		if (camera.position.x > game.world.width)
+			camera.position.x = game.world.width;
+		if (camera.position.x < 0)
+			camera.position.x = 0;
 		}
 	}
 
@@ -310,28 +295,31 @@ class GameManager
 		}
 	}
 
-	playersUpdate(game)
+	playersUpdate(game, win)
 	{
-		/*if (this.player[0].body.sprite.body.position.x >= this.lvl_length * (this.lvl+1) - 50 && game.time.now > this.end_lvl_timer){
-			this.lvl++;
-			this.player[1].spawn({x:this.lvl_length*this.lvl + this.lvl_length/2 + 200, y: 200}, 1, game);
-			this.player[0].spawn({x:this.lvl_length*this.lvl + this.lvl_length/2 - 200, y: 200}, 1,  game);
-			this.end_lvl_timer = game.time.now + 5000;
-			//this.win_or_lose_dir = 0;
-		}
-		if (this.player[1].body.sprite.body.position.x <= this.lvl_length * this.lvl + 50 && game.time.now > this.end_lvl_timer){
-			this.lvl--;
-			this.player[1].spawn({x:this.lvl_length*this.lvl + this.lvl_length/2 + 200, y: 200}, 1,  game);
-			this.player[0].spawn({x:this.lvl_length*this.lvl + this.lvl_length/2 - 200, y: 200}, 1,  game);
-			this.end_lvl_timer = game.time.now + 5000;
-			//this.win_or_lose_dir = 0;
-		}*/
-		if (this.player[0].body.sprite.body.position.x > game.world.width - 300){
+		if (this.player[0].body.sprite.body.position.x > game.world.width - 50){
 			this.win = 0;
 		}
-		if (this.player[1].body.sprite.body.position.x > game.world.width - 300){
+		if (this.player[1].body.sprite.body.position.x < 50){
 			this.win = 1;
 		}
+		
+		if (this.win != -1){
+			var winImage = game.add.image(0, 0, win);
+			winImage.scale.set(0.7);
+			winImage.smoothed = false;
+			winImage.position.y = 100;
+			
+			if (this.win == 0)
+			{
+				this.player[0].body.sprite.body.position.x = game.world.width - game.width/2;
+				winImage.position.x = game.world.width - game.width/2 - 224;		//320 = ширина картинки/2; 224 = 320*scale;
+			}
+			else
+			{
+				this.player[1].body.sprite.body.position.x = game.width/2;
+				winImage.position.x = game.width/2 - 224;
+			}
 	}
 	
 	playerPlayerEffects( game )
@@ -455,7 +443,7 @@ class GameManager
 	{
 		for (var i = 0; i < 5; i++){
 			this.back[i] = game.add.image(0, 0, bg);
-			this.back[i].scale.set(1.2);96
+			this.back[i].scale.set(1.2);
 			this.back[i].smoothed = false;
 			//this.back[i].position.x = 15400 + i*960;
 			this.back[i].position.x = i*960;
